@@ -1,0 +1,17 @@
+#MAP_NUMBER
+
+4
+
+#BACK_TEXTURE
+
+data/チュートリアル/Back111.jpg
+data/チュートリアル/Back121.jpg
+
+data/チュートリアル/Back211.jpg
+data/チュートリアル/Back221.jpg
+
+data/チュートリアル/Back311.jpg
+data/チュートリアル/Back321.jpg
+
+data/チュートリアル/Back411.jpg
+data/チュートリアル/Back421.jpg

@@ -1,0 +1,42 @@
+
+#06/14
+CODE:
+{
+NEW:
+	HPUI.cpp
+	HPUI.h
+	StatusBarUI.cpp
+	StatusBarUI.h
+	StageSelect.cpp
+	StageSelect.h
+	ObjectBase.cpp
+	ObjectBase.h
+
+UPDATE:
+	main.cpp
+	main.h
+	Aclass_object.cpp
+	Aclass_object.h
+	Game.cpp
+	Game.h
+	Stage.cpp
+	Stage.h
+	fade.cpp
+	fade.h
+	Field.cpp
+	Field.h
+	Player.cpp
+	Player.h
+	Camera.cpp
+	Camera.h
+	title.cpp
+	title.h
+	result.cpp
+	result.h
+
+DELETE:
+	bg.cpp
+	bg.h
+
+}
+
