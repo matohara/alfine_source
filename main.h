@@ -68,6 +68,7 @@ typedef enum
 	SCENE_RESULT,		// リザルト画面
 	SCENE_PAUSE,		// ポーズ画面
 	SCENE_MAX,
+	SCENE_END,	// アプリ終了
 } GAMESCENE;
 
 

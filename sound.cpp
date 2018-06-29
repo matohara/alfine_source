@@ -135,7 +135,7 @@ LPDIRECTSOUNDBUFFER8 LoadSound(int no)
 	// 6.曲を読み込む「セカンダリバッファ」を用意
 	ZeroMemory(&buff, sizeof(DSBUFFERDESC));		// まず初期化
 	buff.dwSize = sizeof(DSBUFFERDESC);			// そこから各種設定
-	buff.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_LOCDEFER;
+	buff.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_LOCDEFER | DSBCAPS_CTRLVOLUME;
 	buff.dwBufferBytes = size;
 	buff.lpwfxFormat = &pcm;
 

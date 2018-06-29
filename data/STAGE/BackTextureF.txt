@@ -1,14 +1,11 @@
 #MAP_NUMBER
 
-4
+3
 
 #BACK_TEXTURE
 
 data/チュートリアル/Back112.png
 data/チュートリアル/Back122.png
-
-data/チュートリアル/Back212.png
-data/チュートリアル/Back222.png
 
 data/チュートリアル/Back312.png
 data/チュートリアル/Back322.png

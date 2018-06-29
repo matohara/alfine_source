@@ -118,6 +118,14 @@ public:
 	{
 		return MapNumber;
 	};
+	void SetMapNumber(int no)
+	{
+		MapNumber = no;
+	}
+	void SetPositionX(float posX)
+	{
+		Position.x = posX;
+	}
 	D3DXVECTOR3 GetPosition(void)
 	{
 		return Position;
@@ -125,6 +133,10 @@ public:
 	D3DXVECTOR3 GetPosition(float x, float y, float z)
 	{
 		return (Position + D3DXVECTOR3(x, y, z));
+	}
+	float GetXSize(void)
+	{
+		return Size.x;
 	}
 
 private:

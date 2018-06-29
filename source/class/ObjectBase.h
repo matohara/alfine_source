@@ -28,9 +28,30 @@ using namespace std;
 class C3DPolygonObject : public class_ObjectA
 {
 public:
+	void Init(D3DXVECTOR3 pos, float fX, float fY);
+	void Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fX, float fY);
 	void Init(D3DXVECTOR3 pos, float fX, float fY, const char *file);
 	void Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fX, float fY, const char *file);
 //	void Animation(void);
+	int HitCheck(D3DXVECTOR3 pos);
+
+private:
+
+};
+
+/* 立方体オブジェクト* */
+class C3DCubeObject : public class_ObjectP
+{
+	D3DXVECTOR3 Position;
+	D3DXVECTOR3 Size;
+	D3DXVECTOR3 Rotation;
+
+public:
+	C3DCubeObject() {};
+	~C3DCubeObject() {};
+
+	void Init(D3DXVECTOR3 pos, D3DXVECTOR3 Size, const char *tex);
+//	int MakeVertex(D3DXVECTOR3 size, D3DXVECTOR3 nor);
 
 private:
 
@@ -73,6 +94,8 @@ private:
 
 class C2DUIMenuLogo : public C2DUIPolygon
 {
+public:
+
 	D3DXCOLOR Color;
 	D3DXVECTOR2 Position;
 	D3DXVECTOR2 Size;
@@ -90,7 +113,9 @@ public:
 
 	void Animation01(void);
 	void Animation02(void);
+	void Animation03(void);
 	void Open01(void);
+	void Close01(void);
 
 private:
 

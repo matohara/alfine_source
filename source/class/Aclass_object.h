@@ -26,14 +26,34 @@ using namespace std;
 //*****************************************************************************
 // クラス設計
 //*****************************************************************************
-/* オブジェクトAクラス */
-class class_ObjectA
+/* 基本クラス */
+class c3DBasicObjectClass
 {
 
 protected:
-	LPDIRECT3DTEXTURE9		Texture;	// テクスチャへのポインタ
-	LPDIRECT3DVERTEXBUFFER9 VtxBuff;	// 頂点バッファインターフェースへのポインタ
+	LPDIRECT3DTEXTURE9		Texture;
+	LPDIRECT3DVERTEXBUFFER9 VtxBuff;
 
+public:
+	c3DBasicObjectClass();
+	~c3DBasicObjectClass();
+
+//	virtual void Draw(void);						// 描画処理
+//	virtual void Draw(LPDIRECT3DTEXTURE9 texture);	// 描画処理(テクスチャ指定)
+
+	virtual void LoadTexture(const char *texture);
+	virtual void LoadTexture(LPDIRECT3DTEXTURE9 texture);
+
+private:
+
+};
+
+
+/* オブジェクトAクラス */
+class class_ObjectA : public c3DBasicObjectClass
+{
+
+protected:
 	D3DXVECTOR3 Position;	// 位置座標
 	D3DXVECTOR3 Rotation;	// 回転角度
 	D3DXVECTOR2 Size;		// ポリゴンサイズ
@@ -45,7 +65,7 @@ protected:
 	int AnimePattern;		// 現在のアニメーションパターン番号
 	int ChangeAnimeTime;	// アニメーション切り替え待時間
 
-	virtual int MakeVertex(void);				// 頂点作成
+	virtual int MakeVertex(void);
 	virtual void SetVertex(void);				// 頂点座標設定@頂点位置のみ
 	virtual void SetVertex(D3DXCOLOR color);	// 頂点座標設定@頂点色込み
 
@@ -53,13 +73,12 @@ public:
 	class_ObjectA();
 	~class_ObjectA();
 
-	virtual void Draw(void);						// 描画処理(通常)
-	virtual void Draw(LPDIRECT3DTEXTURE9 texture);	// 描画処理(通常)(テクスチャ指定)
+	virtual void Draw(void);						// 描画処理
+	virtual void Draw(LPDIRECT3DTEXTURE9 texture);	// 描画処理(テクスチャ指定)
 	virtual void DrawBillboard(void);						// 描画処理(ビルボード)
 	virtual void DrawBillboard(LPDIRECT3DTEXTURE9 texture);	// 描画処理(ビルボード)(テクスチャ指定)
 
 	virtual void ReleaseBuffer(void);	// バッファ系開放
-	virtual void LoadTexture(const char *texture);
 	virtual void LoadTextureStatus(float sizX, float sizY, float scale, int ptnX, int ptnY, int time);
 	virtual void LoadTextureStatus(float sizX, float sizY, float scale);	//テクスチャ情報@アニメーションなし
 
@@ -70,29 +89,15 @@ private:
 };
 
 
-/* オブジェクトGクラス */
-class class_ObjectG
+/* オブジェクトPクラス */
+class class_ObjectP : public c3DBasicObjectClass
 {
-
-protected:
-	LPDIRECT3DVERTEXBUFFER9 VtxBuff;	// 頂点バッファインターフェースへのポインタ
-
-	D3DXVECTOR3 Position;	// 位置座標
-	D3DXVECTOR3 Rotation;	// 回転角度
-	D3DXVECTOR2 Size;		// ポリゴンサイズ
-	float Scale;			// サイズ倍率
-
-	virtual int MakeVertex(void);				// 頂点作成
-	virtual void SetVertex(void);				// 頂点座標設定@頂点位置のみ
-	virtual void SetVertex(D3DXCOLOR color);	// 頂点座標設定@頂点色込み
-
 public:
-	class_ObjectG();
-	~class_ObjectG();
+	class_ObjectP();
+	~class_ObjectP();
 
-	virtual void Draw(LPDIRECT3DTEXTURE9 texture);	// 描画処理
-
-	virtual void ReleaseBuffer(void);	// バッファ系開放
+//	virtual int MakeVertex(D3DXVECTOR3 size, D3DXVECTOR3 nor);
+	virtual void SetVertex(float sizeX, float sizeY);
 
 private:
 
@@ -104,13 +109,13 @@ class class_ObjectU
 {
 	
 protected:
-	LPDIRECT3DTEXTURE9	Texture;			// テクスチャへのポインタ
+	LPDIRECT3DTEXTURE9	Texture;	// テクスチャへのポインタ
 
 	virtual void MakeVertex(float sizeX, float sizeY, float posX, float posY);	// 頂点作成
 	virtual void MakeVertex(float sizeX, float sizeY);
 
 public:
-	VERTEX_2D			Vertex[NUM_VERTEX];	// 頂点情報
+	VERTEX_2D	Vertex[NUM_VERTEX];	// 頂点情報
 
 	class_ObjectU();
 	~class_ObjectU();

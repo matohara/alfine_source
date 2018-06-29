@@ -15,6 +15,8 @@
 // ƒ}ƒNƒ’è‹`
 //*****************************************************************************
 #define RESULT_TEX_GAMECLEAR "data/TEXTURE/SCENE/GameClear.png"
+#define RESULT_TEX_GAMEOVER "data/TEXTURE/SCENE/GameOver.png"
+
 #define RESULT_TEX_RETRY "data/TEXTURE/SCENE/Option_G01.png"
 #define RESULT_TEX_GOMENU "data/TEXTURE/SCENE/Modoru.png"
 #define RESULT_TEX_BACK "data/TEXTURE/UI/OptionFrame.png"
@@ -51,8 +53,15 @@ HRESULT InitResult(void)
 	ResultScene = RS_CLEAR;
 
 	ResultBlack.Init();
-	ResultBack.Init(400, 140, RESULT_TEX_BACK);
-	ResultClearUI.Init(250, 250, RESULT_TEX_GAMECLEAR);
+	ResultBack.Init(480, 180, RESULT_TEX_BACK);
+	if (GetPlayerHP() > 0)
+	{
+		ResultClearUI.Init(250, 250, RESULT_TEX_GAMECLEAR);
+	}
+	else
+	{
+		ResultClearUI.Init(250, 250, RESULT_TEX_GAMEOVER);
+	}
 	ResultUI[0].Init(100, 100, RelativeSX(0.3f), SCREEN_CENTER_Y, RESULT_TEX_RETRY);
 	ResultUI[1].Init(150, 150, RelativeSX(0.7f), SCREEN_CENTER_Y, RESULT_TEX_GOMENU);
 
@@ -98,7 +107,7 @@ void UpdateResult(void)
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
 			ResultScene = RS_RETRY;
-			SetFade(FADE_OUT, SCENE_GAME);
+			CSFade::SetFade(SCENE_GAME);
 		}
 		break;
 	case RS_GOMENU:
@@ -110,7 +119,7 @@ void UpdateResult(void)
 		}
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
-			SetFade(FADE_OUT, SCENE_STAGESELECT);
+			CSFade::SetFade(SCENE_STAGESELECT);
 		}
 		break;
 	}

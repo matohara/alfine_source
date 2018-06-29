@@ -28,7 +28,7 @@ void UICNvX::Init(float size, float posX, float posY)
 		UI_NvX_SLASH_POS_X + posX, UI_NvX_SLASH_POS_Y + posY);
 
 	N.SetNumber(1);
-	X.SetNumber(4);
+	X.SetNumber(3);
 }
 
 //----çXêV--------

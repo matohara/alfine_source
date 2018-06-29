@@ -82,7 +82,7 @@ void UpdateTitle(void)
 			TitleStatus = ST_NEWGAME;
 			break;
 		case ST_NEWGAME:
-			SetFade(FADE_OUT, SCENE_STAGESELECT);
+			CSFade::SetFade(SCENE_STAGESELECT);
 			break;
 		case ST_COUNTINUE:
 			break;

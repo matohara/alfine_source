@@ -1,18 +1,15 @@
 #MAP_NUMBER
 
-4
+3
 
 #FIELD_TEXTURE
 
 data/チュートリアル/Field101.jpg
-data/チュートリアル/Field101.jpg
+data/チュートリアル/Field102.png
 
-data/チュートリアル/Field101.jpg
-data/チュートリアル/Field101.jpg
+data/チュートリアル/Field201.jpg
+data/チュートリアル/Field202.png
 
-data/チュートリアル/Field102.jpg
-data/チュートリアル/Field102.jpg
-
-data/チュートリアル/Field102.jpg
-data/チュートリアル/Field102.jpg
+data/チュートリアル/Field201.jpg
+data/チュートリアル/Field202.png
 

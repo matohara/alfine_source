@@ -62,7 +62,7 @@ void UpdateStageSelect(void)
 		switch (SSStastus)
 		{
 		case SSS_TUTORIAL:
-			SetFade(FADE_OUT, SCENE_GAME);
+			CSFade::SetFade(SCENE_GAME);
 			break;
 		}
 	}

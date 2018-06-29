@@ -7,18 +7,14 @@
 #include "main.h"
 #include "input.h"
 #include "light.h"
-#include "camera.h"
+#include "Camera.h"
 #include "sound.h"
 
 #include "source/scene/fade.h"
-#include "source/scene/Loading.h"
-
 #include "source/scene/title.h"
 #include "source/scene/StageSelect.h"
 #include "source/scene/result.h"
-#include "game.h"
-
-#include "Field.h"
+#include "Game.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -146,7 +142,18 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			}
 
 			// 60FPSの精密化(誤差(+-)2)
+
 			dwHighTimer = (dwFrameCount % 3) == 0 ? 16 : 17;
+#ifdef _DEBUG
+			if (GetKeyboardPress(DIK_2))
+			{
+				dwHighTimer = 8;
+			}
+			if (GetKeyboardPress(DIK_4))
+			{
+				dwHighTimer = 4;
+			}
+#endif // _DEBUG
 
 			DWORD dwloop = (dwCurrentTime - dwExecLastTime) / dwHighTimer;
 			if (dwloop > 0)
@@ -154,7 +161,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				PrintDebugProcess("FPS:%d\n", g_nCountFPS);
 				dwExecLastTime = dwCurrentTime;
 
-				for (UINT i = 0; (i < dwloop) & (i < 3); i++)// 追加処理は3回まで(それ以上は処理中止の可能性がある)
+				for (UINT i = 0; (i < dwloop) & (i < 60); i++)
 				{
 					// 更新処理
 					Update();
@@ -304,8 +311,8 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	// デバッグ表示の初期化
 	InitDebugProcess();
 
-	// フェードの初期化
-	InitFade();
+	// フェード
+	CSFade::MakeVertex();
 
 	// サウンド初期化
 	InitSound(hWnd);
@@ -321,6 +328,8 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 //=============================================================================
 void Uninit(void)
 {
+	SetGameScene(SCENE_END);
+
 	if(g_pD3DDevice != NULL)
 	{// デバイスの開放
 		g_pD3DDevice->Release();
@@ -338,9 +347,6 @@ void Uninit(void)
 
 	// デバッグ表示処理の終了処理
 	UninitDebugProcess();
-
-	// フェードの終了処理
-	UninitFade();
 
 	// サウンド終了処理
 
@@ -370,7 +376,7 @@ void Update(void)
 		UpdateStageSelect();
 		if (GetKeyboardTrigger(DIK_ESCAPE))
 		{
-			SetFade(FADE_OUT, SCENE_TITLE);
+			CSFade::SetFade(SCENE_TITLE);
 		}
 		break;
 	case SCENE_TUTORIAL:
@@ -399,7 +405,7 @@ void Update(void)
 	}
 
 	// フェード処理の更新
-	UpdateFade();
+	CSFade::Update();
 
 }
 
@@ -446,7 +452,7 @@ void Draw(void)
 		}
 
 		// フェード描画
-		DrawFade();
+		CSFade::Draw();
 
 		// デバッグ表示の描画処理
 		if (g_bDispDebug)
@@ -476,7 +482,7 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 GAMESCENE SetGameScene(GAMESCENE scene)
 {
 	/* 指定シーンが同じ場合は戻る */
-	if (g_GameScene == scene)
+	if ((g_GameScene == scene) || (scene == SCENE_MAX))
 	{
 		return g_GameScene;
 	}
