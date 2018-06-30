@@ -73,6 +73,8 @@ private:
 
 class C2DUIMenuLogo : public C2DUIPolygon
 {
+
+public:
 	D3DXCOLOR Color;
 	D3DXVECTOR2 Position;
 	D3DXVECTOR2 Size;
