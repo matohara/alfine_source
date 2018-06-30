@@ -167,6 +167,7 @@ void UpdateStageSelect(void)
 		// エンターキーを押されたら
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
+<<<<<<< HEAD
 			// ステージセレクト
 			switch (SSStastus)
 			{
@@ -177,6 +178,11 @@ void UpdateStageSelect(void)
 				SetFade(FADE_OUT, SCENE_GAME);
 				break;
 			}
+=======
+		case SSS_TUTORIAL:
+			CSFade::SetFade(SCENE_GAME);
+			break;
+>>>>>>> 3d1d2c42f701a0751764c57f7c58b2e3bfe651f9
 		}
 
 		// ↑キーを押したら

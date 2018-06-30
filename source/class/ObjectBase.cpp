@@ -17,6 +17,25 @@
 
 /* 3D 汎用ポリゴン */
 //----初期化--------
+void C3DPolygonObject::Init(D3DXVECTOR3 pos, float fX, float fY)
+{
+	// 基本情報セット
+	Size = { fX, fY };
+	Position = pos;
+
+	// 頂点設定
+	MakeVertex();
+}
+void C3DPolygonObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fX, float fY)
+{
+	// 基本情報セット
+	Size = { fX, fY };
+	Position = pos;
+	Rotation = rot;
+
+	// 頂点設定
+	this->class_ObjectA::MakeVertex();
+}
 void C3DPolygonObject::Init(D3DXVECTOR3 pos, float fX, float fY, const char *file)
 {
 	// 基本情報セット
@@ -42,6 +61,28 @@ void C3DPolygonObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fX, float fY
 	// 頂点設定
 	this->class_ObjectA::MakeVertex();
 }
+
+//----当たり判定--------
+int C3DPolygonObject::HitCheck(D3DXVECTOR3 pos)
+{
+	if ((pos.x >= Position.x - Size.x) && (pos.x <= Position.x + Size.x))
+	{
+		return 1;
+	}
+	return  0;
+}
+
+
+/* 立方体オブジェクト */
+void C3DCubeObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size, const char *tex)
+{
+
+
+}
+
+//----頂点作成--------
+
+
 
 //=============================================================================
 // < G型上位オブジェクト >
@@ -86,11 +127,11 @@ void C2DUIPolygon::Init(void)
 //----コンストラクタ--------
 C2DUIPolygonA::C2DUIPolygonA()
 {
-	TexPattern_X;
-	TexPattern_Y;
-	AnimeCount;
-	AnimePattern;
-	ChangeAnimeTime;
+	TexPattern_X    = 0;
+	TexPattern_Y    = 0;
+	AnimeCount      = 0;
+	AnimePattern    = 0;
+	ChangeAnimeTime = 0;
 }
 
 //----アニメーション--------
@@ -195,13 +236,20 @@ void C2DUIMenuLogo::Animation01(void)
 {
 	float scale = cosf(Scale += 0.05f) / 10.0f + 1.0f;
 	SetVertex(Size.x * scale, Size.y * scale);
-	SetPosition(Position.x, Position.y);
+	class_ObjectU::SetPosition(Position.x, Position.y);
 }
 
 //----アニメーション02--------
 void C2DUIMenuLogo::Animation02(void)
 {
 	SetVertex(D3DXCOLOR(0.2f, 1.0f, 0.4f, 1.0f));
+}
+
+//----アニメーション03--------
+void C2DUIMenuLogo::Animation03(void)
+{
+	Color.a = Color.a ? 0.0f : 1.0f;
+	SetVertex(Color);
 }
 
 //----Open01--------
@@ -214,6 +262,22 @@ void C2DUIMenuLogo::Open01(void)
 		SetVertex(size.x, size.y, Position.x, Position.y);
 	}
 }
+
+//----Close01--------
+void C2DUIMenuLogo::Close01(void)
+{
+	if (Open <= 0.0f)
+	{
+		Open = 0.0f;
+	}
+	if (Open > 0.0f)
+	{
+		Open -= 0.05f;
+		D3DXVECTOR2 size = Size * Open;
+		SetVertex(size.x, size.y, Position.x, Position.y);
+	}
+}
+
 
 
 /* パーセントゲージ */

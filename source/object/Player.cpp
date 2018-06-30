@@ -253,7 +253,7 @@ void PlayerB::LoadPlayerStatus(int bx, int by, float x, float y)
 	Position = D3DXVECTOR3(-1200.0f, y, GAME_PLAYER_ZPOS);
 	Rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	Speed = 2;
+	Speed = 3;
 
 	MakeVertex();
 }
@@ -308,7 +308,7 @@ void PlayerB::Init(const char *texture)
 		Speed = 0.0f;		// 移動速度(総合時間)
 		MapNumber = 0;		// 次のマップ番号
 		RouteCounter = 0;	// 移動進行度
-		MapMax = 4;			// マップ最大数
+		MapMax = 3;			// マップ最大数
 	}
 
 	// テクスチャ読み込み
@@ -339,7 +339,7 @@ void PlayerB::Init(const char *texture, int x, int y)
 		Speed = 0.0f;		// 移動速度(総合時間)
 		MapNumber = 0;		// 次のマップ番号
 		RouteCounter = 0;	// 移動進行度
-		MapMax = 4;			// マップ最大数
+		MapMax = 3;			// マップ最大数
 	}
 
 	// テクスチャ読み込み

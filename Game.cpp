@@ -26,6 +26,11 @@
 #define TUTORIAL_UI13 "data/チュートリアル/Text12.png"
 
 #define TUTORIAL_UI21 "data/チュートリアル/Text21.png"
+#define TUTORIAL_UI22 "data/チュートリアル/Text22.png"
+#define TUTORIAL_UI23 "data/チュートリアル/Text23.png"
+
+#define TUTORIAL_UI31 "data/チュートリアル/poipoi2.png"
+
 
 /* TutorialObject */
 #define TUTORIAL_OBJ01 "data/チュートリアル/obj01.png"
@@ -36,6 +41,8 @@ enum TUTORIALSCENE
 	TS_SOUSA,
 	TS_MOVE2,
 	TS_DAMEGE,
+	TS_DAMEGEMOVE,
+	TS_OKDAMEGE,
 	TS_TOPLAY,
 	TS_PLAYING,
 	TS_MAX
@@ -55,7 +62,7 @@ void GameSystem::Init(void)
 	Notes = NULL;
 	GameCounter = 0;
 	NotesCounter = 0;
-	NotesCounter2 = 0;
+	NotesCounter2 = 3;
 	PlayerHP = 5;
 
 	// ガイドUI
@@ -63,57 +70,22 @@ void GameSystem::Init(void)
 
 	// ステージ
 	CNotes notes[] = {
-		{ 328 },
-		{ 408 },
-		{ 488 },
-		{ 564 },
-		{ 647 },
-		{ 688 },
-		{ 726 },
-		{ 805 },
-		{ 885 },
-		{ 965 },
-		{ 1046 },
-		{ 1125 },
-		{ 1204 },
-		{ 1284 },
-		{ 1365 },
-		{ 1445 },
-		{ 1524 },
-		{ 1607 },
-		{ 1645 },
-		{ 1684 },
-		{ 1724 },
-		{ 1766 },
-		{ 1801 },
-		{ 1844 },
-		{ 1885 },
-		{ 1924 },
-		{ 2005 },
-		{ 2084 },
-		{ 2166 },
-		{ 2245 },
-		{ 2327 },
-		{ 2404 },
-		{ 2485 },
-		{ 2566 },
-		{ 2646 },
-		{ 2724 },
-		{ 2806 },
-		{ 2886 },
-		{ 2964 },
-		{ 3044 },
-		{ 3125 },
-		{ 3206 },
-		{ 3285 },
-		{ 3364 },
-		{ 3445 },
-		{ 3525 },
-		{ 3604 },
-		{ 3684 },
-		{ 3765 },
-		{ 3844 },
-		{ 3925 } };
+		{  160 },
+		{  240 },
+		{  321 },
+		{  403 },
+		{  484 },
+		{  565 },
+		{  642 },
+		{  704 },
+		{  809 },
+		{  883 },
+		{  962 },
+		{ 1083 },
+		{ 1184 },
+		{ 1281 },
+		{ 1362 },
+		{ 1442 } };
 	const int notesSize = sizeof(notes) / sizeof(CNotes);
 	Notes = new CNotes[notesSize];
 	for (int iCnt = 0; iCnt < notesSize; iCnt++)
@@ -143,12 +115,7 @@ void GameSystem::Init(void)
 	TestField[1].Init(512, 256, 0);
 	NowLoading.Progress(90);
 	TestField[2].Init(512, 256, 1);
-
-	NowLoading.Progress(100);
-	NowLoading.Uninit();
 	
-	Sleep(5000);
-
 	// HPUI
 	HitPointUI.Init(HPUI_MAX_HP);
 
@@ -161,6 +128,8 @@ void GameSystem::Init(void)
 	// ステージナンバー
 	NumberSlashMAX.Init(1.0f, 0.0f, 0.0f);
 
+	NowLoading.Progress(100);
+	NowLoading.Uninit();
 }
 
 //----終了--------
@@ -208,29 +177,29 @@ void GameSystem::Uninit(void)
 void GameSystem::Update(void)
 {
 	// リザルトへ
-#if 1
-	if (PlayerHP <= 0)
+#ifndef _DEBUG
+	if (PlayerHP == 0)
 	{
-		PlayerHP = 0;
-		SetFade(FADE_OUT, SCENE_RESULT);
+		PlayerHP = -1;
+		CSFade::SetFade(SCENE_RESULT);
 	}
-#endif
+#endif // !_DEBUG
 
 	if (GameFlag & FLAG_GAME_PLAYING)
 	{
-		if (GameCounter > 5400)// 5400 = 90s * 60f
-		{
-			SetFade(FADE_OUT, SCENE_RESULT);
-		}
-
 		// 判定
 		if (GetKeyboardTrigger(DIK_SPACE))
 		{
 			SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
-			if ((GameCounter < Notes[NotesCounter].Timing - 8) ||
-				(GameCounter > Notes[NotesCounter].Timing + 12))
+			//if ((GameCounter < Notes[NotesCounter].Timing - 8) ||
+			//	(GameCounter > Notes[NotesCounter].Timing + 12))
+			//{
+			//	CSFade::SetFade(0.2f, GAMECOLOR_RED);
+			//	PlayerHP--;
+			//}
+			//else
 			{
-				PlayerHP--;
+				CSFade::SetFade(0.2f);
 			}
 		}
 
@@ -244,11 +213,13 @@ void GameSystem::Update(void)
 			{
 				SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);	// 現在の表裏判定を更新
 				PlayerHP--;
+				CSFade::SetFade(0.4f, GAMECOLOR_RED);
 			}
 			SetGameFlag(FLAG_GAME_NEXTSIDES, FT_CHANGE);	// 次の表裏判定を更新
 			NotesCounter++;
 		}
 
+#ifdef _DEBUG
 		// UI
 		if (GameCounter == Notes[NotesCounter2].Timing - 300)
 		{
@@ -259,6 +230,8 @@ void GameSystem::Update(void)
 				NotesCounter2 = 64;
 			}
 		}
+#endif // _DEBUG
+
 
 		// ゲームを進行
 		GameCounter++;
@@ -374,25 +347,33 @@ UICNotesLane NotesLane;
 UICNotes UINotes[NOTES_UI_MAX];
 #endif // DEBUG
 
-C3DPolygonObject TutorialObj[2];
+LPDIRECT3DTEXTURE9 TutorialObjTex = NULL;
+
+C3DPolygonObject TutorialObj[4];
+C3DPolygonObject TutorialObjON[8][2];
+C3DPolygonObject TutorialObjOF[8][2];
 
 GameSystem GameSys;
 PlayerC TestFriend;
 C2DUIMenuLogo TutorialUI[2][3];
-C2DUIMenuLogo TutorialUIx1[2];
+C2DUIMenuLogo TutorialUIx1[3];
+C2DUIMenuLogo TutorialOtete;
 TUTORIALSCENE TutorialScene = TS_MOVE;
 
-int Couner = 0;
+int Counter = 0;
+int RetunPoint = 0;
 
 //=============================================================================
 // 初期化処理
 //=============================================================================
 HRESULT InitGame(void)
 {
+	D3DXCreateTextureFromFile(GetDevice(), TUTORIAL_OBJ01, &TutorialObjTex);
 
 	// 変数の初期化
 	TutorialScene = TS_MOVE;
-	Couner = 0;
+	Counter = 0;
+	RetunPoint = 0;
 
 	// ライトの初期化
 	InitLight();
@@ -404,8 +385,35 @@ HRESULT InitGame(void)
 	GameSys.Init();
 
 	// オブジェクト
-	TutorialObj[0].Init(D3DXVECTOR3(0.0f, 50.0f, -200), 50, 50, TUTORIAL_OBJ01);
-	TutorialObj[1].Init(D3DXVECTOR3(0.0f, 50.0f, -100), D3DXVECTOR3(0.0f, 1.57f, 0.0f), 50, 50, TUTORIAL_OBJ01);
+	TutorialObj[0].Init(D3DXVECTOR3(200.0f, 50.0f, -100), 50, 50);
+	TutorialObj[1].Init(D3DXVECTOR3(155.0f, 50.0f, -50), D3DXVECTOR3(0.0f, 1.57f, 0.0f), 50, 50);
+	TutorialObj[2].Init(D3DXVECTOR3(-450.0f, 50.0f, -100), 50, 50);
+	TutorialObj[3].Init(D3DXVECTOR3(-495.0f, 50.0f, -50), D3DXVECTOR3(0.0f, 1.57f, 0.0f), 50, 50);
+
+	int cnt = 0;
+	float posX = 0.0f;
+	for (int i = 0; i < 8; i++)
+	{
+		posX = (float)(-1100 + ((GameSys.Notes[cnt].Timing * 3) + 30) + 50);
+		if (posX >= 1100)
+		{
+			posX -= 2200;
+		}
+		TutorialObjON[i][0].Init(D3DXVECTOR3(posX, 50.0f, -100.0f), 50, 50);
+		posX -= 45.0f;
+		TutorialObjON[i][1].Init(D3DXVECTOR3(posX, 50.0f, -50.0f), D3DXVECTOR3(0.0f, 1.57f, 0.0f), 50, 50);
+		cnt++;
+		
+		posX = (float)(-1100 + ((GameSys.Notes[cnt].Timing * 3) + 30) + 50);
+		if (posX >= 1100)
+		{
+			posX -= 2200;
+		}
+		TutorialObjOF[i][0].Init(D3DXVECTOR3(posX, 50.0f, -100.0f), 50, 50);
+		posX -= 45.0f;
+		TutorialObjOF[i][1].Init(D3DXVECTOR3(posX, 50.0f, -50.0f), D3DXVECTOR3(0.0f, 1.57f, 0.0f), 50, 50);
+		cnt++;
+	}
 
 	// 友人
 	TestFriend.Init(TEXTURE_FRIEND2, 7, 1);
@@ -423,10 +431,13 @@ HRESULT InitGame(void)
 	TutorialUI[0][0].Init(300, 120, SCREEN_CENTER_X, RelativeSY(0.2f), TUTORIAL_UI01);
 	TutorialUI[0][1].Init(300, 120, SCREEN_CENTER_X, RelativeSY(0.2f), TUTORIAL_UI02);
 	TutorialUI[0][2].Init(300, 120, SCREEN_CENTER_X, RelativeSY(0.2f), TUTORIAL_UI03);
-	TutorialUI[1][0].Init(300,  60, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI11);
-	TutorialUI[1][1].Init(320,  40, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI12);
+	TutorialUI[1][0].Init(200,  40, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI11);
+	TutorialUI[1][1].Init(200,  25, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI12);
 	TutorialUI[1][2].Init(300,  15, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI13);
-	TutorialUIx1[0].Init( 300, 120, SCREEN_CENTER_X, RelativeSY(0.2f), TUTORIAL_UI21);
+	TutorialUIx1[0].Init( 300, 120, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI21);
+	TutorialUIx1[1].Init( 250, 100, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI22);
+	TutorialUIx1[2].Init( 250, 100, SCREEN_CENTER_X, RelativeSY(0.8f), TUTORIAL_UI23);
+	TutorialOtete.Init(50, 50, RelativeSX(0.35f), 60, TUTORIAL_UI31);
 
 #ifdef _DEBUG
 	/* keep */
@@ -438,6 +449,19 @@ HRESULT InitGame(void)
 	{
 		UINotes[iCnt].Init();
 	}
+
+	// UI
+	int no = 0;
+	int fc = 0;
+	for (int i = 0; GameSys.Notes[i].Timing - 300 < 0; i++)
+	{
+		no = CallNotesUI();
+		fc = GameSys.Notes[i].Timing - 300;
+		for (int c = 0; c < fc; c++)
+		{
+			UINotes[no].Update();
+		}
+	}
 #endif // DEBUG
 
 	return S_OK;
@@ -448,6 +472,12 @@ HRESULT InitGame(void)
 //=============================================================================
 void UninitGame(void)
 {
+	if (TutorialObjTex != NULL)
+	{
+		TutorialObjTex->Release();
+		TutorialObjTex = NULL;
+	}
+
 	/* UI */
 	TutorialUI[0][0].ReleaseBuffer();
 	TutorialUI[0][1].ReleaseBuffer();
@@ -456,6 +486,18 @@ void UninitGame(void)
 	TutorialUI[1][1].ReleaseBuffer();
 	TutorialUI[1][2].ReleaseBuffer();
 	TutorialUIx1[0].ReleaseBuffer();
+	TutorialUIx1[1].ReleaseBuffer();
+	TutorialUIx1[2].ReleaseBuffer();
+	TutorialOtete.ReleaseBuffer();
+
+	for (int i = 0; i < 8; i++)
+	{
+		TutorialObjON[i][0].ReleaseBuffer();
+		TutorialObjON[i][1].ReleaseBuffer();
+		TutorialObjOF[i][0].ReleaseBuffer();
+		TutorialObjOF[i][1].ReleaseBuffer();
+	}
+
 
 	// ライトの終了処理
 	UninitLight();
@@ -468,6 +510,10 @@ void UninitGame(void)
 
 	// オブジェクト
 	TutorialObj[0].ReleaseBuffer();
+	TutorialObj[1].ReleaseBuffer();
+
+	TutorialObj[2].ReleaseBuffer();
+	TutorialObj[3].ReleaseBuffer();
 
 	// 友人
 	TestFriend.Uninit();
@@ -505,27 +551,6 @@ void UninitGame(void)
 //=============================================================================
 void UpdateGame(void)
 {
-	// ゲームの再生、停止
-	if (GetKeyboardTrigger(DIK_P))
-	{
-		if (GameSys.GameFlag & FLAG_GAME_PLAYING)
-		{
-			GameSys.GameFlag &= ~FLAG_GAME_PLAYING;
-
-			StopSound(g_pBGM[0]);
-			StopSound(g_pBGM[1]);
-		}
-		else
-		{
-			GameSys.GameFlag |= FLAG_GAME_PLAYING;
-
-			// 再生
-			PlaySound(g_pBGM[0], E_DS8_FLAG_LOOP);
-			PlaySound(g_pBGM[1], E_DS8_FLAG_LOOP);
-			VolumeControl(g_pBGM[1], VOLUME_MIN);
-		}
-	}
-
 	// 判定
 	//if (GetKeyboardTrigger(DIK_SPACE))
 	//{
@@ -551,7 +576,7 @@ void UpdateGame(void)
 			// 友人
 			TestFriend.SetPosition(-760.0f);
 		}
-		else if (GameSys.TestPlayer.GetPosition().x <= -400.0f)
+		else if (GameSys.TestPlayer.GetPosition().x <= -600.0f)
 		{
 			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
 			GameSys.TestPlayer.Animation();
@@ -562,40 +587,65 @@ void UpdateGame(void)
 			TutorialScene = TS_SOUSA;
 			GameSys.TestPlayer.ReSetTexture();
 			TestFriend.ReSetTexture();
+			Counter = 0;
 		}
 	}
 		break;
 	case TS_SOUSA:
 	{
-		Couner++;
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if (Counter < 150)
 		{
-			Couner = 150;
+			Counter++;
+			TutorialUI[0][0].Open01();	// スペースで変わるよ
+			if (GetKeyboardTrigger(DIK_RETURN))
+			{
+				Counter = 150;
+			}
 		}
-		TutorialUI[0][0].Open01();
-
-		if (Couner >= 150)
+		else if (Counter == 150)
+		{
+			TutorialUI[0][0].Close01();
+			if (GetKeyboardTrigger(DIK_SPACE))// 変化を判定
+			{
+				SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
+				CSFade::SetFade(0.2f);
+				Counter = 160;
+			}
+		}
+		else if (Counter == 160)
+		{
+			TutorialUIx1[0].Open01();
+			if (GetKeyboardTrigger(DIK_RETURN))// 変化を判定
+			{
+				Counter = 200;
+			}
+		}
+		else if (Counter < 400)
+		{
+			TutorialUIx1[0].Close01();
+			Counter++;
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+			TestFriend.Update(GameSys.TestPlayer.GetPosition().x + 40);
+		}
+		else if (Counter == 400)
 		{
 			if (GetKeyboardTrigger(DIK_SPACE))
 			{
+				SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
+				CSFade::SetFade(0.2f);
 				TutorialScene = TS_MOVE2;
-				Couner = 0;
+				Counter = 0;
 			}
 		}
 	}
 		break;
 	case TS_MOVE2:
 	{
-		TutorialUIx1[0].Open01();
-
-		if (GetKeyboardTrigger(DIK_RETURN))
+		Counter++;
+		if (Counter >= 60)
 		{
-			Couner = 1;
-		}
-
-		if (Couner)
-		{
-			if (GameSys.TestPlayer.GetPosition().x <= -200.0f)
+			if (GameSys.TestPlayer.GetPosition().x <= 0.0f)
 			{
 				// プレイヤー
 				GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
@@ -605,35 +655,179 @@ void UpdateGame(void)
 			else
 			{
 				TutorialScene = TS_DAMEGE;
-				Couner = 0;
+				Counter = 0;
 			}
 		}
 	}
 		break;
 	case TS_DAMEGE:
-		Couner++;
-		TutorialUI[0][1].Open01();
+		Counter++;
+		TutorialUI[0][1].Open01();	// ダメージ受けちゃうよ
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
-			TutorialScene = TS_TOPLAY;
-			Couner = 0;
+			TutorialScene = TS_DAMEGEMOVE;
+			Counter = 0;
 		}
 		break;
+	case TS_DAMEGEMOVE: //実際にダメージを受けてみる
+	{
+		if (Counter <= 80)
+		{
+			Counter++;
+			// プレイヤー
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+		}
+		else
+		{
+			// プレイヤー
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+			TestFriend.Update(GameSys.TestPlayer.GetPosition().x - 40);
+
+			if (TutorialObj[0].HitCheck(GameSys.TestPlayer.GetPosition() + D3DXVECTOR3(80.0f, 0.0f, 0.0f)))
+			{
+				GameSys.PlayerHP--;
+				SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
+				CSFade::SetFade(0.2f, GAMECOLOR_RED);
+				TutorialScene = TS_OKDAMEGE;
+				Counter = 0;
+			}
+		}
+	}
+		break;
+	case TS_OKDAMEGE:
+	{
+		if (Counter < 300)
+		{
+			Counter++;
+			if (Counter % 30 == 0)
+			{
+				TutorialOtete.Animation03();
+			}
+		}
+		else if (Counter <= 300)
+		{
+			TutorialUIx1[1].Open01();
+			if (GetKeyboardTrigger(DIK_RETURN))
+			{
+				Counter = 400;
+			}
+		}
+		else if (Counter == 400)
+		{
+			TutorialUIx1[2].Open01();
+			if (GetKeyboardTrigger(DIK_RETURN))
+			{
+				Counter = 450;
+			}
+		}
+		else if (GameSys.TestPlayer.GetPosition().x <= 400)
+		{
+			// プレイヤー
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+			TestFriend.Update(GameSys.TestPlayer.GetPosition().x - 40);
+			Counter = 500;
+		}
+		else if (Counter == 500)
+		{
+			SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
+			CSFade::SetFade(0.2f);
+			Counter = 600;
+		}
+		else if (GameSys.TestPlayer.GetPosition().x <= 700)
+		{
+			// プレイヤー
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+			TestFriend.Update(GameSys.TestPlayer.GetPosition().x - 40);
+		}
+		else if (Counter == 600)
+		{
+			SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
+			CSFade::SetFade(0.2f);
+			Counter = 700;
+		}
+		else if (GameSys.TestPlayer.GetPosition().x <= 900)
+		{
+			// プレイヤー
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+			TestFriend.Update(GameSys.TestPlayer.GetPosition().x - 40);
+		}
+		else if (Counter == 700)
+		{
+			SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
+			CSFade::SetFade(0.2f);
+			Counter = 800;
+		}
+		else if (GameSys.TestPlayer.GetPosition().x < 1100)
+		{
+			// プレイヤー
+			GameSys.TestPlayer.GoPoint(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+			GameSys.TestPlayer.Animation();
+			TestFriend.Update(GameSys.TestPlayer.GetPosition().x - 40);
+		}
+		else
+		{
+			GameSys.TestPlayer.SetMapNumber(1);
+			GameSys.TestPlayer.SetPositionX(-1100);
+			CSFade::SetFade(0.2f);
+			TutorialScene = TS_TOPLAY;
+			Counter = 0;
+		}
+	}
+		break;
 	case TS_TOPLAY:
-		Couner++;
+		Counter++;
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
 			TutorialScene = TS_PLAYING;
-			Couner = 0;
+			Counter = 0;
+			GameSys.GameFlag |= FLAG_GAME_PLAYING;
+			GameSys.PlayerHP = 5;
 		}
 		TutorialUI[0][2].Open01();
 		break;
 	case TS_PLAYING:
+		if (!Counter)
+		{
+			Counter = 1;
+			// 再生
+			PlaySound(g_pBGM[0], E_DS8_FLAG_LOOP);
+			PlaySound(g_pBGM[1], E_DS8_FLAG_LOOP);
+			VolumeControl(g_pBGM[1], VOLUME_MIN);
+		}
+
+#ifdef _DEBUG
+		// ゲームの再生、停止
+		if (GetKeyboardTrigger(DIK_P))
+		{
+			if (GameSys.GameFlag & FLAG_GAME_PLAYING)
+			{
+				GameSys.GameFlag &= ~FLAG_GAME_PLAYING;
+
+				StopSound(g_pBGM[0]);
+				StopSound(g_pBGM[1]);
+			}
+			else
+			{
+				GameSys.GameFlag |= FLAG_GAME_PLAYING;
+
+				// 再生
+				PlaySound(g_pBGM[0], E_DS8_FLAG_LOOP);
+				PlaySound(g_pBGM[1], E_DS8_FLAG_LOOP);
+				VolumeControl(g_pBGM[1], VOLUME_MIN);
+			}
+		}
+
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
 			// リザルトへ
-			SetFade(FADE_OUT, SCENE_RESULT);
+			CSFade::SetFade(SCENE_RESULT);
 		}
+#endif // _DEBUG
 
 		if (GameSys.GameFlag & FLAG_GAME_PLAYING)
 		{
@@ -684,14 +878,104 @@ void DrawGame(void)
 	SetCamera();
 
 	// オブジェクト
-	TutorialObj[0].DrawBillboard();
-	TutorialObj[1].Draw();
+	if (TutorialScene == TS_PLAYING)
+	{
+		if (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
+		{
+			if (GameSys.TestPlayer.GetMapNumber() == 1)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					TutorialObjOF[i][0].Draw(TutorialObjTex);
+					TutorialObjOF[i][1].Draw(TutorialObjTex);
+				}
+			}
+			else if (GameSys.TestPlayer.GetMapNumber() == 2)
+			{
+				for (int i = 4; i < 8; i++)
+				{
+					TutorialObjOF[i][0].Draw(TutorialObjTex);
+					TutorialObjOF[i][1].Draw(TutorialObjTex);
+				}
+			}
+		}
+		else
+		{
+			if (GameSys.TestPlayer.GetMapNumber() == 1)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					TutorialObjON[i][0].Draw(TutorialObjTex);
+					TutorialObjON[i][1].Draw(TutorialObjTex);
+				}
+			}
+			else if (GameSys.TestPlayer.GetMapNumber() == 2)
+			{
+				for (int i = 4; i < 8; i++)
+				{
+					TutorialObjON[i][0].Draw(TutorialObjTex);
+					TutorialObjON[i][1].Draw(TutorialObjTex);
+				}
+			}
+		}
+	}
+	else
+	{
+		if (!SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
+		{
+			TutorialObj[0].Draw(TutorialObjTex);
+			TutorialObj[1].Draw(TutorialObjTex);
+
+			TutorialObj[2].Draw(TutorialObjTex);
+			TutorialObj[3].Draw(TutorialObjTex);
+		}
+	}
 
 	// ゲーム
 	GameSys.Draw();
 
 	// 友人
 	TestFriend.Draw();
+
+	switch (TutorialScene)
+	{
+	case TS_SOUSA:
+		if ((Counter == 150) || (Counter == 400))
+			TutorialUI[1][0].Draw();// 下
+		if (Counter <= 170)
+			TutorialUI[0][0].Draw();// 上
+		if (Counter >= 160)
+			TutorialUIx1[0].Draw();
+		break;
+	case TS_MOVE2:
+		if (Counter == 0)
+			TutorialUIx1[0].Draw();
+		break;
+	case TS_DAMEGE:
+		if (Counter >= 150)
+			TutorialUI[1][1].Draw();
+		else
+			TutorialUI[0][1].Draw();
+		break;
+	case TS_DAMEGEMOVE: //実際にダメージを受けてみる
+		break;
+	case TS_OKDAMEGE:
+		if (Counter <= 300)
+			TutorialOtete.Draw();
+		if (Counter > 0 && Counter <= 300)
+			TutorialUIx1[1].Draw();
+		else if (Counter == 400)
+			TutorialUIx1[2].Draw();
+		break;
+	case TS_TOPLAY:
+		if (Counter >= 150)
+			TutorialUI[1][2].Draw();
+		else
+			TutorialUI[0][2].Draw();
+		break;
+	case TS_PLAYING:
+		break;
+	}
 
 #ifdef _DEBUG
 	/* Keep */
@@ -707,34 +991,6 @@ void DrawGame(void)
 		}
 	}
 #endif // DEBUG
-
-	switch (TutorialScene)
-	{
-	case TS_SOUSA:
-		if (Couner >= 150)
-			TutorialUI[1][0].Draw();
-		else
-			TutorialUI[0][0].Draw();
-		break;
-	case TS_MOVE2:
-		if (Couner == 0)
-			TutorialUIx1[0].Draw();
-		break;
-	case TS_DAMEGE:
-		if (Couner >= 150)
-			TutorialUI[1][1].Draw();
-		else
-			TutorialUI[0][1].Draw();
-		break;
-	case TS_TOPLAY:
-		if (Couner >= 150)
-			TutorialUI[1][2].Draw();
-		else
-			TutorialUI[0][2].Draw();
-		break;
-	case TS_PLAYING:
-		break;
-	}
 
 }
 

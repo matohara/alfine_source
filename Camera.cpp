@@ -141,7 +141,7 @@ void CCamera::Rotation(D3DXVECTOR2 moveRate)
 //----’Ç”ö--------
 void CCamera::Tracking(D3DXVECTOR3 target)
 {
-	Gaze = target + D3DXVECTOR3(100.0f, 0.0f, 0.0f);
+	Gaze = target + D3DXVECTOR3(50.0f, 0.0f, 0.0f);
 	if (Gaze.x < GAMECAMERA_XLIMIT_MIN)
 	{
 		Gaze.x = GAMECAMERA_XLIMIT_MIN;

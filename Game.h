@@ -37,6 +37,10 @@
 #define VOLUME_MAX (DSBVOLUME_MAX)
 #define VOLUME_MIN (DSBVOLUME_MIN)
 
+/* Color */
+#define GAMECOLOR_RED D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.0f)
+
+
 enum FLAGTYPE
 {
 	FT_CHANGE = -1,
@@ -119,7 +123,10 @@ void UpdateGame(void);
 void DrawGame(void);
 UINT SetGameFlag(UINT flg, FLAGTYPE type);
 
-int CallNotesUI(void);
 int GetPlayerHP(void);
+
+#ifdef _DEBUG
+int CallNotesUI(void);
+#endif
 
 #endif

@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 #TargetFrameworkVersion=v4.0:PlatformToolSet=v140:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit
 Debug|Win32|C:\Users\matohara.fumiya\Desktop\alfine_source\|
+=======
+#TargetFrameworkVersion=v4.0:PlatformToolSet=v140:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit:WindowsTargetPlatformVersion=8.1
+Debug|Win32|C:\Users\Public\Documents\就職作品\チーム製作\2017-GM23\GitProject\|
+>>>>>>> 3d1d2c42f701a0751764c57f7c58b2e3bfe651f9
