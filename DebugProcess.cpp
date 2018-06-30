@@ -70,8 +70,11 @@ void DrawDebugProcess(void)
 {
 	RECT rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
+	//// 情報表示
+	//g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xFF, 0xFF, 0x22, 0x44));
+
 	// 情報表示
-	g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xFF, 0xFF, 0x22, 0x44));
+	g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xFF, 0x00, 0x00, 0x00));
 
 	// 情報クリア
 	memset(g_aStrDebug, 0, sizeof g_aStrDebug);
