@@ -18,9 +18,11 @@
 //----èâä˙âªèàóù--------
 void UICNvX::Init(float size, float posX, float posY)
 {
+	LPDIRECT3DTEXTURE9 tex;
 	N.LoadTexture(UI_TEX_NUMBER);
-	X.LoadTexture(UI_TEX_NUMBER);
-	Slash.LoadTexture(UI_TEX_SLASH);
+	N.GetTextureAddress(&tex);
+	X.LoadTexture(tex);
+	Slash.LoadTexture(tex);
 
 	N.Init(UI_NvX_N_SIZE_X * size, UI_NvX_N_SIZE_Y * size, UI_NvX_N_POS_X + posX, UI_NvX_N_POS_Y + posY);
 	X.Init(UI_NvX_X_SIZE_X * size, UI_NvX_X_SIZE_Y * size, UI_NvX_X_POS_X + posX, UI_NvX_X_POS_Y + posY);
@@ -29,6 +31,7 @@ void UICNvX::Init(float size, float posX, float posY)
 
 	N.SetNumber(1);
 	X.SetNumber(3);
+	Slash.SetNumber(0);
 }
 
 //----çXêV--------

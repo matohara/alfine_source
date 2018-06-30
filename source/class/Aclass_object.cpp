@@ -662,6 +662,13 @@ void class_ObjectU::SetTexture(int num, int ix, int iy)
 	Vertex[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 }
 
+//----テクスチャリンク--------
+LPDIRECT3DTEXTURE9 class_ObjectU::GetTextureAddress(LPDIRECT3DTEXTURE9 *texture)
+{
+	*texture = Texture;
+	return Texture;
+}
+
 //----バッファ系開放--------
 void class_ObjectU::ReleaseBuffer(void)
 {
@@ -677,5 +684,10 @@ void class_ObjectU::LoadTexture(const char *texture)
 {
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(GetDevice(), texture, &Texture);
+}
+void class_ObjectU::LoadTexture(LPDIRECT3DTEXTURE9 texture)
+{
+	// テクスチャの読み込み
+	Texture = texture;
 }
 

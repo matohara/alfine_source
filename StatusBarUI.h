@@ -57,7 +57,7 @@ class UICNvX
 {
 	C2DUINumber N;
 	C2DUINumber X;
-	C2DUIPolygon Slash;
+	C2DUINumber Slash;
 
 public:
 	UICNvX() {};

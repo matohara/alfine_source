@@ -125,6 +125,7 @@ public:
 
 	virtual void ReleaseBuffer(void);	// バッファ系開放
 	virtual void LoadTexture(const char *texture);
+	virtual void LoadTexture(LPDIRECT3DTEXTURE9 texture);
 
 	virtual void SetVertex(float sizeX, float sizeY, float posX, float posY);	// 頂点座標設定
 	virtual void SetVertex(float sizeX, float sizeY);
@@ -132,6 +133,8 @@ public:
 
 	virtual void SetPosition(float posX, float posY);	// 移動
 	virtual void SetTexture(int num, int ix, int iy);	// テクスチャ座標設定
+
+	virtual LPDIRECT3DTEXTURE9 GetTextureAddress(LPDIRECT3DTEXTURE9 *texture);
 
 private:
 
