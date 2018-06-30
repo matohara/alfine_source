@@ -330,10 +330,10 @@ int class_ObjectA::MakeVertex(void)
 		VtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 		// í∏ì_ç¿ïWÇÃê›íË
-		pVtx[0].vtx = D3DXVECTOR3(-Size.x, Size.y, 0.0f);
-		pVtx[1].vtx = D3DXVECTOR3(Size.x, Size.y, 0.0f);
+		pVtx[0].vtx = D3DXVECTOR3(-Size.x,  Size.y, 0.0f);
+		pVtx[1].vtx = D3DXVECTOR3( Size.x,  Size.y, 0.0f);
 		pVtx[2].vtx = D3DXVECTOR3(-Size.x, -Size.y, 0.0f);
-		pVtx[3].vtx = D3DXVECTOR3(Size.x, -Size.y, 0.0f);
+		pVtx[3].vtx = D3DXVECTOR3( Size.x, -Size.y, 0.0f);
 
 		// ñ@ê¸ÇÃê›íË
 		pVtx[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
