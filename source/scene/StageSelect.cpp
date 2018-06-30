@@ -165,7 +165,7 @@ void UpdateStageSelect(void)
 	for (int i = 0;i < SSS_MAX;i++)
 	{
 		// エンターキーを押されたら
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			// ステージセレクト
 			switch (SSStastus)
@@ -180,7 +180,7 @@ void UpdateStageSelect(void)
 		}
 
 		// ↑キーを押したら
-		else if (GetKeyboardTrigger(DIK_UP))
+		else if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
 		{
 			// 上移動可能ならば
 			if (UPflag == true)
@@ -287,7 +287,7 @@ void UpdateStageSelect(void)
 
 
 		// ↓キーを押したらz
-		else if (GetKeyboardTrigger(DIK_DOWN))
+		else if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
 		{
 			// 下移動可能ならば
 			if (DOWNflag == true)
@@ -392,7 +392,7 @@ void UpdateStageSelect(void)
 	// 下移動制御処理
 	// 最後の処理だったら
 	// ↑キーを押したら
-	if (GetKeyboardTrigger(DIK_UP))
+	if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
 	{
 		// 上移動制御処理
 		// 最初の処理だったら
@@ -410,7 +410,7 @@ void UpdateStageSelect(void)
 
 	}
 	// ↓キーを押したら
-	else if (GetKeyboardTrigger(DIK_DOWN))
+	else if if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
 	{
 
 		if (SSSflag[SSS_CRYSTAL] == ROT_SELECT)

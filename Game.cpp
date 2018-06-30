@@ -188,7 +188,7 @@ void GameSystem::Update(void)
 	if (GameFlag & FLAG_GAME_PLAYING)
 	{
 		// 判定
-		if (GetKeyboardTrigger(DIK_SPACE))
+		if ((GetKeyboardTrigger(DIK_SPACE))||(IsButtonTriggered(0, BUTTON_X)))
 		{
 			SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
 			//if ((GameCounter < Notes[NotesCounter].Timing - 8) ||
@@ -597,7 +597,7 @@ void UpdateGame(void)
 		{
 			Counter++;
 			TutorialUI[0][0].Open01();	// スペースで変わるよ
-			if (GetKeyboardTrigger(DIK_RETURN))
+			if ((GetKeyboardTrigger(DIK_RETURN))|| (IsButtonTriggered(0, BUTTON_X)))
 			{
 				Counter = 150;
 			}
@@ -605,7 +605,7 @@ void UpdateGame(void)
 		else if (Counter == 150)
 		{
 			TutorialUI[0][0].Close01();
-			if (GetKeyboardTrigger(DIK_SPACE))// 変化を判定
+			if ((GetKeyboardTrigger(DIK_SPACE)) || (IsButtonTriggered(0, BUTTON_X)))// 変化を判定
 			{
 				SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
 				CSFade::SetFade(0.2f);
@@ -615,7 +615,7 @@ void UpdateGame(void)
 		else if (Counter == 160)
 		{
 			TutorialUIx1[0].Open01();
-			if (GetKeyboardTrigger(DIK_RETURN))// 変化を判定
+			if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))// 変化を判定
 			{
 				Counter = 200;
 			}
@@ -630,7 +630,7 @@ void UpdateGame(void)
 		}
 		else if (Counter == 400)
 		{
-			if (GetKeyboardTrigger(DIK_SPACE))
+			if ((GetKeyboardTrigger(DIK_SPACE)) || (IsButtonTriggered(0, BUTTON_X)))
 			{
 				SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
 				CSFade::SetFade(0.2f);
@@ -663,7 +663,7 @@ void UpdateGame(void)
 	case TS_DAMEGE:
 		Counter++;
 		TutorialUI[0][1].Open01();	// ダメージ受けちゃうよ
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			TutorialScene = TS_DAMEGEMOVE;
 			Counter = 0;
@@ -709,7 +709,7 @@ void UpdateGame(void)
 		else if (Counter <= 300)
 		{
 			TutorialUIx1[1].Open01();
-			if (GetKeyboardTrigger(DIK_RETURN))
+			if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 			{
 				Counter = 400;
 			}
@@ -717,7 +717,7 @@ void UpdateGame(void)
 		else if (Counter == 400)
 		{
 			TutorialUIx1[2].Open01();
-			if (GetKeyboardTrigger(DIK_RETURN))
+			if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 			{
 				Counter = 450;
 			}
@@ -781,7 +781,7 @@ void UpdateGame(void)
 		break;
 	case TS_TOPLAY:
 		Counter++;
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			TutorialScene = TS_PLAYING;
 			Counter = 0;
@@ -822,7 +822,7 @@ void UpdateGame(void)
 			}
 		}
 
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			// リザルトへ
 			CSFade::SetFade(SCENE_RESULT);

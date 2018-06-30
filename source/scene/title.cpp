@@ -74,7 +74,7 @@ void UninitTitle(void)
 //=============================================================================
 void UpdateTitle(void)
 {
-	if (GetKeyboardTrigger(DIK_RETURN))
+	if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 	{
 		switch (TitleStatus)
 		{
@@ -91,12 +91,12 @@ void UpdateTitle(void)
 		}
 	}
 
-	if (GetKeyboardTrigger(DIK_ESCAPE))
+	if ((GetKeyboardTrigger(DIK_ESCAPE)) || (IsButtonTriggered(0, BUTTON_B)))
 	{
 		TitleStatus = ST_PRESSKEY;
 	}
 
-	if (GetKeyboardTrigger(DIK_UP))
+	if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
 	{
 		switch (TitleStatus)
 		{
@@ -113,7 +113,7 @@ void UpdateTitle(void)
 		}
 	}
 
-	if (GetKeyboardTrigger(DIK_DOWN))
+	if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
 	{
 		switch (TitleStatus)
 		{

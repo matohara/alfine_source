@@ -92,19 +92,19 @@ void UpdateResult(void)
 	switch (ResultScene)
 	{
 	case RS_CLEAR:
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			ResultScene = RS_RETRY;
 		}
 		break;
 	case RS_RETRY:
 		ResultUI[0].Animation01();
-		if (GetKeyboardTrigger(DIK_LEFT) || GetKeyboardTrigger(DIK_RIGHT))
+		if ((GetKeyboardTrigger(DIK_LEFT)) || (GetKeyboardTrigger(DIK_RIGHT)) || (IsButtonTriggered(0, LSTICK_LEFT)) || (IsButtonTriggered(0, LSTICK_RIGHT)))
 		{
 			ResultScene = RS_GOMENU;
 			ResultUI[0].ReSet();
 		}
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			ResultScene = RS_RETRY;
 			CSFade::SetFade(SCENE_GAME);
@@ -112,12 +112,12 @@ void UpdateResult(void)
 		break;
 	case RS_GOMENU:
 		ResultUI[1].Animation01();
-		if (GetKeyboardTrigger(DIK_LEFT) || GetKeyboardTrigger(DIK_RIGHT))
+		if if ((GetKeyboardTrigger(DIK_LEFT)) || (GetKeyboardTrigger(DIK_RIGHT)) || (IsButtonTriggered(0, LSTICK_LEFT)) || (IsButtonTriggered(0, LSTICK_RIGHT)))
 		{
 			ResultScene = RS_RETRY;
 			ResultUI[1].ReSet();
 		}
-		if (GetKeyboardTrigger(DIK_RETURN))
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			CSFade::SetFade(SCENE_STAGESELECT);
 		}

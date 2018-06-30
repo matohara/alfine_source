@@ -374,7 +374,7 @@ void Update(void)
 	case SCENE_STAGESELECT:
 		// ステージ選択シーンの更新処理
 		UpdateStageSelect();
-		if (GetKeyboardTrigger(DIK_ESCAPE))
+		if ((GetKeyboardTrigger(DIK_ESCAPE)) || (IsButtonTriggered(0, BUTTON_B)))
 		{
 			CSFade::SetFade(SCENE_TITLE);
 		}
