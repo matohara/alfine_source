@@ -5,8 +5,7 @@
 //
 //=============================================================================
 #include "Camera.h"
-#include "input.h"
-#include "DebugProcess.h"
+#include "Library\Input.h"
 
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
@@ -15,8 +14,8 @@
 //#define	CAMERA_GAZE_Y		( 120.0f)	// ƒJƒƒ‰1(Main)‹“_‚Ì‰ŠúˆÊ’u(YÀ•W)
 //#define	CAMERA_GAZE_Z		(-400.0f)	// ƒJƒƒ‰1(Main)‹“_‚Ì‰ŠúˆÊ’u(ZÀ•W)
 
-#define GAMECAMERA_XLIMIT_MIN (-1000)
-#define GAMECAMERA_XLIMIT_MAX ( 1000)
+#define GAMECAMERA_XLIMIT_MIN (    0)
+#define GAMECAMERA_XLIMIT_MAX (16400)
 
 #define CtoA_INTERVAL_MAX	(640.0f)	// ƒJƒƒ‰‚Æ’‹“_ŠÔ‚ÌÅ‘å‹——£
 #define CtoA_INTERVAL_MIN	(240.0f)	// ƒJƒƒ‰‚Æ’‹“_ŠÔ‚ÌÅ¬‹——£
@@ -259,20 +258,16 @@ void CCamera::SetAngle(D3DXVECTOR3 vector)		{ Angle = vector; }		//--ƒJƒƒ‰‚ÌƒAƒ
 void CCamera::SetUpVector(D3DXVECTOR3 vector)	{ UpVector = vector; }	//--ƒJƒƒ‰‚Ìã•ûŒü
 void CCamera::SetIntervel(float distance)		{ Interval = distance; }//--‹——£
 
-//*****************************************************************************
-// ƒvƒƒgƒ^ƒCƒvéŒ¾
-//*****************************************************************************
-
 
 //*****************************************************************************
 // ƒOƒ[ƒoƒ‹•Ï”
 //*****************************************************************************
 CCamera GameCamera;
 
-#if _DEBUG_MODE_CAMERA_
+#if _DEBUG
 CCamera DebugCamera;
 bool DebugCameraFlag = false;
-#endif // _DEBUG_MODE_CAMERA_
+#endif // _DEBUG
 
 
 //=============================================================================
@@ -283,10 +278,10 @@ HRESULT InitCamera(void)
 	// ƒQ[ƒ€ƒJƒƒ‰
 	GameCamera.Init();
 
-#if _DEBUG_MODE_CAMERA_
+#if _DEBUG
 	// ƒfƒoƒbƒNƒJƒƒ‰
 	DebugCamera.Init();
-#endif // _DEBUG_MODE_CAMERA_
+#endif // _DEBUG
 
 
 	return S_OK;
@@ -306,13 +301,13 @@ void UninitCamera(void)
 void UpdateCamera(D3DXVECTOR3 target)
 {
 	// ƒQ[ƒ€ƒJƒƒ‰
+#if _DEBUG
 	GameCamera.UNIQ_DebugMove();
 	GameCamera.Scaling(GetMouseZ() / 10.0f);
+#endif // _DEBUG
 	GameCamera.Tracking(target);
 
-	PrintDebugProcess("ƒQ[ƒ€ƒJƒƒ‰‹——£ : (%f)\n", GameCamera.Interval);
-
-#if _DEBUG_MODE_CAMERA_
+#if _DEBUG
 	// Ø‚è‘Ö‚¦
 	if (GetKeyboardTrigger(DIK_C))
 	{
@@ -327,7 +322,7 @@ void UpdateCamera(D3DXVECTOR3 target)
 		DebugCamera.Scaling(MouseMovement.z);
 		DebugCamera.Rotation(D3DXVECTOR2(MouseMovement.x, MouseMovement.y));
 	}
-#endif // _DEBUG_MODE_CAMERA_
+#endif // _DEBUG
 
 }
 
@@ -336,7 +331,7 @@ void UpdateCamera(D3DXVECTOR3 target)
 //=============================================================================
 void SetCamera(void)
 {
-#if _DEBUG_MODE_CAMERA_
+#if _DEBUG
 	if (DebugCameraFlag)
 	{
 		// ƒfƒoƒbƒNƒJƒƒ‰
@@ -350,7 +345,7 @@ void SetCamera(void)
 #else
 	// ƒQ[ƒ€ƒJƒƒ‰
 	GameCamera.CreateMatrix();
-#endif // _DEBUG_MODE_CAMERA_
+#endif // _DEBUG
 
 }
 

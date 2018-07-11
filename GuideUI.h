@@ -7,18 +7,15 @@
 #ifndef _UI_GUIDE_CLASS_INCLUDE_H_
 #define _UI_GUIDE_CLASS_INCLUDE_H_
 
-#include "source/class/Aclass_object.h"
+
+#include "Library\ObjectBase3D.h"
 #include "main.h"
 
-//*****************************************************************************
-// マクロ定義
-//*****************************************************************************
+
 #define UI_TEX_GUIDE  "data/TEXTURE/UI/Guide.png"
 
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
-class UICGuide : public class_ObjectA
+
+class UICGuide : public C3DPolygonObject
 {
 	D3DXCOLOR TexColor;
 
@@ -27,9 +24,8 @@ public:
 	UICGuide() {};
 	~UICGuide() {};
 
-	void Init();
+	int Init();
 	int Update();
-	void Draw();
 	void Uninit();
 
 	void SetGuideUI(D3DXVECTOR3 pos);
@@ -39,9 +35,6 @@ private:
 };
 
 
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
 
 
 

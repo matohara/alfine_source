@@ -7,8 +7,8 @@
 #ifndef _UI_HP_CLASS_INCLUDE_H_
 #define _UI_HP_CLASS_INCLUDE_H_
 
+#include "Library\ObjectBase2D.h"
 #include "main.h"
-#include "source/class/ObjectBase.h"
 
 //*****************************************************************************
 // É}ÉNÉçíËã`
@@ -29,7 +29,7 @@
 //*****************************************************************************
 class UICHitPoint
 {
-	C2DUIPolygon *HP_UI;
+	C2DObject *HP_UI;
 	LPDIRECT3DTEXTURE9 Texture[2];
 	int HP_MAX;
 
@@ -37,7 +37,7 @@ public:
 	UICHitPoint() {};
 	~UICHitPoint() {};
 
-	void Init(int num, float sizeX, float sizeY, float posX, float posY);
+	void Init(int num, float posX, float posY, float sizeX, float sizeY);
 	void Init(int num);
 	void Update(void);
 	void Draw(int hp);

@@ -1,26 +1,25 @@
 //=============================================================================
 //
 // メイン処理 [main.cpp]
-// Author : 
+// Author : 初 景新
 //
 //=============================================================================
 #include "main.h"
-#include "input.h"
-#include "light.h"
+#include "Library\Input.h"
+#include "Library\Light.h"
+#include "Library\Sound.h"
+#include "Library\Fade.h"
+#include "StageSelect.h"
+#include "result.h"
+#include "title.h"
 #include "Camera.h"
-#include "sound.h"
-
-#include "source/scene/fade.h"
-#include "source/scene/title.h"
-#include "source/scene/StageSelect.h"
-#include "source/scene/result.h"
 #include "Game.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define CLASS_NAME		"HPTApplication"		// ウインドウのクラス名
-#define WINDOW_NAME		"葉っぱ隊製作物"		// ウインドウのキャプション名
+#define CLASS_NAME		"LeafersProjectXalfine"	// ウインドウのクラス名
+#define WINDOW_NAME		"alfine"				// ウインドウのキャプション名
 
 //*****************************************************************************
 // 構造体定義

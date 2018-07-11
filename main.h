@@ -1,7 +1,7 @@
 //=============================================================================
 //
 // メイン処理 [main.h]
-// Author : 
+// Author : 初 景新
 //
 //=============================================================================
 #ifndef _MAIN_H_
@@ -24,7 +24,7 @@
 #include <dinput.h>			// DirectInput関連のヘッダー
 #include <xaudio2.h>		// XAudio2関連のヘッダー
 
-#include "DebugProcess.h"
+#include "Library\DebugProcess.h"
 
 
 //*****************************************************************************
@@ -53,6 +53,7 @@
 
 #define RelativeSX(m) (SCREEN_WIDTH * m)
 #define RelativeSY(m) (SCREEN_HEIGHT * m)
+#define Absolute(m)   (m < 0 ? -m : m)
 
 #define	NUM_VERTEX		(4)		// 頂点数
 #define	NUM_POLYGON		(2)		// ポリゴン数

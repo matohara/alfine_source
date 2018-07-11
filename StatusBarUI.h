@@ -8,7 +8,7 @@
 #define _UI_STATUSBAR_CLASS_INCLUDE_H_
 
 #include "main.h"
-#include "source/class/ObjectBase.h"
+#include "Library\ObjectBase2D.h"
 
 //*****************************************************************************
 // É}ÉNÉçíËã`
@@ -55,9 +55,9 @@
 //*****************************************************************************
 class UICNvX
 {
-	C2DUINumber N;
-	C2DUINumber X;
-	C2DUINumber Slash;
+	UI2DNumber N;
+	UI2DNumber X;
+	UI2DNumber Slash;
 
 public:
 	UICNvX() {};

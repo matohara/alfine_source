@@ -8,10 +8,10 @@
 #define _GAME_INCLUDE_H_
 
 #include "main.h"
-#include "sound.h"
 
-#include "source/class/ObjectBase.h"
-#include "source/object/Player.h"
+#include "Library\ObjectBase3D.h"
+#include "Library\ObjectBase2D.h"
+#include "Player.h"
 #include "Back.h"
 #include "Field.h"
 
@@ -81,15 +81,16 @@ class GameSystem
 public:
 	PlayerB TestPlayer;
 	CNotes *Notes;
-	FieldA TestField[3];
-	BGCBackFront BackWall[3];
-	BGCBackFront FrontWall[3];
 
-	C2DUIPolygon BackPolyUI;
-	C2DUIPolygon LogoOption;
-	UICGuide GuideUI;
+	GameField      OnSideField;
+	GameField      OffSideField;
+	GameBackGround OnSideBG[2];
+	GameBackGround OffSideBG[2];
+
+	C2DObject   BackPolyUI;
+	C2DObject   LogoOption;
+	UICGuide    GuideUI;
 	UICHitPoint HitPointUI;
-	UICNvX NumberSlashMAX;
 
 	UINT GameFlag;
 

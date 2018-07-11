@@ -7,8 +7,8 @@
 #ifndef _UI_NOTES_CLASS_INCLUDE_H_
 #define _UI_NOTES_CLASS_INCLUDE_H_
 
+#include "Library\ObjectBase2D.h"
 #include "main.h"
-#include "source/class/Aclass_object.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -22,15 +22,13 @@
 //*****************************************************************************
 // クラス設計
 //*****************************************************************************
-class UICNotesLane : public class_ObjectU
+class UICNotesLane : public C2DObject
 {
 public:
 	UICNotesLane() {};
 	~UICNotesLane() {};
 
-	void Init(void);
-//	void Update(void);
-	void Draw(void);
+	int  Init(void);
 	void Uninit(void);
 
 private:
@@ -38,7 +36,7 @@ private:
 };
 
 
-class UICNotes : public class_ObjectU
+class UICNotes : public C2DObject
 {
 
 public:
@@ -49,9 +47,8 @@ public:
 	UICNotes() {};
 	~UICNotes() {};
 
-	void Init(void);
+	int  Init(void);
 	void Update(void);
-	void Draw(void);
 	void Uninit(void);
 
 	void ReSet(void);

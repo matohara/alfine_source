@@ -6,33 +6,20 @@
 //=============================================================================
 #include "HPUI.h"
 
-//*****************************************************************************
-// マクロ定義
-//*****************************************************************************
-
-
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
-
-
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
 
 //----初期化処理--------
-void UICHitPoint::Init(int num, float sizeX, float sizeY, float posX, float posY)
+void UICHitPoint::Init(int num, float posX, float posY, float sizeX, float sizeY)
 {
 	// テクスチャ
 	D3DXCreateTextureFromFile(GetDevice(), UI_TEX_HP01, &Texture[0]);
 	D3DXCreateTextureFromFile(GetDevice(), UI_TEX_HP02, &Texture[1]);
 
 	HP_MAX = num;
-	HP_UI = new C2DUIPolygon[HP_MAX];
+	HP_UI = new C2DObject[HP_MAX];
 
 	for (int iCnt = 0; iCnt < HP_MAX; iCnt++)
 	{
-		HP_UI[iCnt].Init(sizeX, sizeY, posX + sizeX * 2 * (iCnt - (HP_MAX / 2)), posY);
+		HP_UI[iCnt].SetStatus(posX + sizeX * 2 * (iCnt - (HP_MAX / 2)), posY, sizeX, sizeY);
 	}
 }
 void UICHitPoint::Init(int num)
@@ -42,11 +29,11 @@ void UICHitPoint::Init(int num)
 	D3DXCreateTextureFromFile(GetDevice(), UI_TEX_HP02, &Texture[1]);
 
 	HP_MAX = num;
-	HP_UI = new C2DUIPolygon[HP_MAX];
+	HP_UI = new C2DObject[HP_MAX];
 
 	for (int iCnt = 0; iCnt < HP_MAX; iCnt++)
 	{
-		HP_UI[iCnt].Init(HPUI_SIZE_X, HPUI_SIZE_Y, HPUI_POS_X * (float)(iCnt+1), HPUI_POS_Y);
+		HP_UI[iCnt].Init(HPUI_POS_X * (float)(iCnt+1), HPUI_POS_Y, HPUI_SIZE_X, HPUI_SIZE_Y);
 	}
 }
 

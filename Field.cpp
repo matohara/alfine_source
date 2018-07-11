@@ -4,148 +4,67 @@
 // Author : 初 景新
 //
 //=============================================================================
-#include "input.h"
 #include "Field.h"
 
-//*****************************************************************************
-// マクロ定義
-//*****************************************************************************
+
 #define TEXTURE_FILE_FIELD  "data/STAGE/FieldTexture.txt"
 
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
 
-
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
-
-//----テクスチャをロード--------
-void FieldA::LoadTexture(void)
+//----初期化処理--------
+void FieldA::Init(float posX, float sizeX, float sizeY, LPDIRECT3DTEXTURE9 texture)
 {
-	// Output 受け取る
-	FILE *fp = fopen(TEXTURE_FILE_FIELD, "r");	// ファイルを開く
+	// データの初期化
+	this->Texture = NULL;
+	this->Position = D3DXVECTOR3(posX, 0.0f, 0.0f);
+	this->Rotation = D3DXVECTOR3(D3DXToRadian(90), 0.0f, 0.0f);
 
-	if (fp == NULL)
-	{// ファイルが開けたかチェック
-		MessageBox(GethWnd(), "ファイルの読み込みに失敗しました", "ERROR=\"File Open\"", MB_YESNO);
-	}
-
-	// マップデータを取る
-	{
-		char comment[256];
-		fscanf(fp, "%s", comment);
-		if (strcmp(comment, "#MAP_NUMBER"))
-		{
-			MessageBox(GethWnd(), "ファイルの読み込みに失敗しました", "ERROR=\"File Read\"", MB_YESNO);
-		}
-	}
-
-	// メモリ確保
-	fscanf(fp, "%d", &MapMax);
-	FieldTexture[0] = new LPDIRECT3DTEXTURE9[MapMax];
-	FieldTexture[1] = new LPDIRECT3DTEXTURE9[MapMax];
-
-	// ファイルパスを読み込む
-	{
-		char comment[256];
-		fscanf(fp, "%s", comment);
-		if (strcmp(comment, "#FIELD_TEXTURE"))
-		{
-			MessageBox(GethWnd(), "ファイルの読み込みに失敗しました", "ERROR=\"File Read2\"", MB_YESNO);
-		}
-	}
-
-	// テクスチャ読み込み
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	char pass[256];
-	for (int iCnt = 0; iCnt < MapMax; iCnt++)
-	{
-		// 表テクスチャ読み込み
-		fscanf(fp, "%s", pass);
-		D3DXCreateTextureFromFile(pDevice, pass, &FieldTexture[0][iCnt]);
-		// 裏テクスチャ読み込み
-		fscanf(fp, "%s", pass);
-		D3DXCreateTextureFromFile(pDevice, pass, &FieldTexture[1][iCnt]);
-	}
-
-	fclose(fp);	// ファイル操作終了
-
-}
-
-//----情報をセット--------
-void FieldA::LoadStatus(float x, float y)
-{
-	LoadTextureStatus(x, y, 1.0f);
-
-	MakeVertex();
+	this->LoadTexture(texture);						// テクスチャ読み込み
+	this->LoadTextureStatus(sizeX, sizeY, 1.0f);	// 情報をセット
+	this->MakeVertex();								// 頂点作成
 }
 
 
 //----初期化処理--------
-void FieldA::Init(float x, float y, int posX)
+void GameField::Init(float sizeX, float sizeY, const char *texture)
 {
-	// データの初期化
-	FieldTexture[0] = NULL;
-	FieldTexture[1] = NULL;
-	MapMax = 0;
-
-	Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	Rotation = D3DXVECTOR3(D3DXToRadian(90), 0.0f, 0.0f);
-	Position.x = x * 2 * posX;
-
-	// テクスチャ読み込み
-	//if (posX == 0)
+	this->LoadTexture(texture);
+	for (int iCnt = 0; iCnt < FIELD_MUN; iCnt++)
 	{
-		LoadTexture();
+		Parts[iCnt].Init(sizeX * 2.0f * iCnt, sizeX, sizeY, Texture);
 	}
-
-	// 情報をセット
-	LoadStatus(x, y);
-}
-
-//----更新--------
-void FieldA::Update(void)
-{
-
 }
 
 //----描画処理--------
-void FieldA::Draw(int sides, int map)
+void GameField::Draw()
 {
-	this->class_ObjectA::Draw(FieldTexture[sides][map]);
+	for (int iCnt = 0; iCnt < FIELD_MUN; iCnt++)
+	{
+		Parts[iCnt].Draw();
+	}
 }
 
 //----終了処理--------
-void FieldA::Uninit(void)
+void GameField::Uninit()
 {
-	// バッファ開放
-	this->FieldA::ReleaseBuffer();
-	this->class_ObjectA::ReleaseBuffer();
+	if (Texture != NULL)
+	{
+		Texture->Release();
+		Texture = NULL;
+	}
+	for (int iCnt = 0; iCnt < FIELD_MUN; iCnt++)
+	{
+		Parts[iCnt].Release();
+	}
 }
 
-
-//----バッファ開放--------
-void FieldA::ReleaseBuffer(void)
+//----テクスチャを与える--------
+void GameField::LoadTexture(const char *texture)
 {
-	for (int iCnt = 0; iCnt < MapMax; iCnt++)
+	if (Texture != NULL)
 	{
-		if (FieldTexture[0][iCnt] != NULL)
-		{
-			FieldTexture[0][iCnt]->Release();
-			FieldTexture[0][iCnt] = NULL;
-		}
-		if (FieldTexture[1][iCnt] != NULL)
-		{
-			FieldTexture[1][iCnt]->Release();
-			FieldTexture[1][iCnt] = NULL;
-		}
+		Texture->Release();
+		Texture = NULL;
 	}
-	delete[] FieldTexture[0];
-	delete[] FieldTexture[1];
-
-	FieldTexture[0] = NULL;
-	FieldTexture[1] = NULL;
+	D3DXCreateTextureFromFile(GetDevice(), texture, &Texture);
 }
 

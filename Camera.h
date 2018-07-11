@@ -8,7 +8,7 @@
 #define _CAMERA_INCLUDE_H_
 
 #include "main.h"
-#include "input.h"
+
 
 //*****************************************************************************
 // マクロ定義
@@ -17,18 +17,13 @@
 
 #define	VIEW_ANGLE		(D3DXToRadian(45))								// ビュー平面の視野角(45度)
 #define	VIEW_ASPECT		((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT)	// ビュー平面のアスペクト比	
-#define	VIEW_NEAR_Z		(10.0f)											// ビュー平面のNearZ値
+#define	VIEW_NEAR_Z		(10.0f)											// ビュー平面_DEBUG_MODE_CAMERA_のNearZ値
 #define	VIEW_FAR_Z		(32768.0f)										// ビュー平面のFarZ値
 
-// デバッグ
-#define _DEBUG_MODE_CAMERA_ (1)
-
-#if _DEBUG_MODE_CAMERA_
-
-#define	CAMERA_MOVE_VALUE	(2.0f)		// 移動量
-#define	GAZE_MOVE_VALUE		(0.005f)	// 移動量
-
-#endif // _DEBUG_MODE_CAMERA_
+#if _DEBUG
+#define CAMERA_MOVE_VALUE	(2.0f)		// 移動量
+#define GAZE_MOVE_VALUE		(0.005f)	// 移動量
+#endif // _DEBUG
 
 
 enum CAMERA_STATUS

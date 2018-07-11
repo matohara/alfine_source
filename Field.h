@@ -7,39 +7,48 @@
 #ifndef _FIELD_CLASS_INCLUDE_H_
 #define _FIELD_CLASS_INCLUDE_H_
 
-#include "source/class/Aclass_object.h"
-#include "main.h"
+#include "Library\ObjectBase3D.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
+#define FIELD_TEX_FRONT "data/チュートリアル/Field201.jpg"
+#define FIELD_TEX_BACK  "data/チュートリアル/Field202.png"
 
+#define FIELD_MUN (18)
 
 //*****************************************************************************
 // クラス設計
 //*****************************************************************************
-class FieldA : public class_ObjectA
+class FieldA : public C3DPolygonObject
 {
-	LPDIRECT3DTEXTURE9 *FieldTexture[2];
-	int MapMax;
 
 public:
 	FieldA() {};
 	~FieldA() {};
 
-	void LoadTexture(void);
-	void LoadStatus(float x, float y);
-
-	void Init(float x, float y, int posX);
-	void Update(void);
-	void Draw(int sides, int map);
-	void Uninit(void);
-
-	void ReleaseBuffer(void);
+	void Init(float posX, float sizeX, float sizeY, LPDIRECT3DTEXTURE9 texture);
 
 private:
 
 };
+
+
+class GameField
+{
+	LPDIRECT3DTEXTURE9 Texture;
+	FieldA Parts[FIELD_MUN];
+
+public:
+	void Init(float sizeX, float sizeY, const char *texture);
+//	void Update(void);
+	void Draw(void);
+	void Uninit(void);
+
+	void LoadTexture(const char *texture);
+
+};
+
 
 
 //*****************************************************************************
