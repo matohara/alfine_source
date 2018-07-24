@@ -5,42 +5,43 @@
 //
 //=============================================================================
 #include "Game.h"
+#include "Stage.h"
 
 #include "Library\Input.h"
-#include "Library\Sound.h"
 #include "Library\Fade.h"
 #include "Library\Loading.h"
 #include "Library\Light.h"
 #include "Camera.h"
+#include "Menu.h"
+
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
 #define NOTES_UI_MAX (20)
-#define NOTES_FILE  "data/STAGE/Datafile01.txt"
-
-/* TutorialText */
-#define TUTORIAL_UI01 "data/チュートリアル/Text00.png"
-#define TUTORIAL_UI02 "data/チュートリアル/Text01.png"
-#define TUTORIAL_UI03 "data/チュートリアル/Text02.png"
-#define TUTORIAL_UI11 "data/チュートリアル/Text10.png"
-#define TUTORIAL_UI12 "data/チュートリアル/Text11.png"
-#define TUTORIAL_UI13 "data/チュートリアル/Text12.png"
-
-#define TUTORIAL_UI21 "data/チュートリアル/Text21.png"
-#define TUTORIAL_UI22 "data/チュートリアル/Text22.png"
-#define TUTORIAL_UI23 "data/チュートリアル/Text23.png"
-
-#define TUTORIAL_UI31 "data/チュートリアル/poipoi2.png"
-
-
-/* TutorialObject */
-#define TUTORIAL_OBJ01 "data/チュートリアル/obj01.png"
+#define GAME_TEX_NUMBER "data/TEXTURE/UI/Number.png"
 
 
 //*****************************************************************************
 // クラス
 //*****************************************************************************
+DSound         GameSystem::BackMusic[2];
+PlayerB        GameSystem::MainPlayer;
+CNotes        *GameSystem::Notes;
+GameField      GameSystem::OnSideField;
+GameField      GameSystem::OffSideField;
+GameBackGround GameSystem::OnSideBG[2];
+GameBackGround GameSystem::OffSideBG[2];
+CountDown      GameSystem::Countdown;
+C2DObject      GameSystem::BackPolyUI;
+C2DObject      GameSystem::LogoOption;
+UICGuide       GameSystem::GuideUI;
+UICHitPoint    GameSystem::HitPointUI;
+UINT           GameSystem::GameFlag;
+int            GameSystem::GameCounter;
+int            GameSystem::NotesCounter;
+int            GameSystem::NotesCounter2;
+int            GameSystem::PlayerHP;
 
 //----初期化--------
 void GameSystem::Init(void)
@@ -49,6 +50,7 @@ void GameSystem::Init(void)
 	CNowLoading NowLoading;
 	NowLoading.Init(SCENE_GAME);
 
+	// データの初期化
 	Notes = NULL;
 	GameCounter = 0;
 	NotesCounter = 0;
@@ -84,24 +86,28 @@ void GameSystem::Init(void)
 	}
 
 	// プレイヤー
-	TestPlayer.Init(TEXTURE_PLAYER2, 7, 1);
+	MainPlayer.Init(TEXTURE_PLAYER2, 7, 1);
 
+	/* ローディング更新 */
 	NowLoading.Progress(10);
 
 	// 表前後壁
 	OnSideBG[0].Init(256, 640, 120, BACK_TEX_ONSIDE_BACK);
 	OnSideBG[1].Init(128, 640, 120, BACK_TEX_ONSIDE_FRONT);
+	/* ローディング更新 */
 	NowLoading.Progress(30);
 
 	// 裏前後壁
 	OffSideBG[0].Init(256, 640, 120, BACK_TEX_OFFSIDE_BACK);
 	OffSideBG[1].Init(128, 640, 120, BACK_TEX_OFFSIDE_FRONT);
+	/* ローディング更新 */
 	NowLoading.Progress(60);
 
 	// フィールド
 	OnSideField.Init(480, 270, FIELD_TEX_FRONT);
 	OffSideField.Init(480, 270, FIELD_TEX_BACK);
-	NowLoading.Progress(90);
+	/* ローディング更新 */
+	NowLoading.Progress(70);
 	
 	// HPUI
 	HitPointUI.Init(HPUI_MAX_HP);
@@ -112,6 +118,20 @@ void GameSystem::Init(void)
 	// オプションロゴ
 	LogoOption.Init(LOGO_OPTION_POS_X, LOGO_OPTION_POS_Y, LOGO_OPTION_SIZE_X, LOGO_OPTION_SIZE_Y, LOGOUI_TEX_BACKPOLY);
 
+	// カウントダウン
+	Countdown.Set(0, 0, 50, 100, GAME_TEX_NUMBER);
+
+	/* ローディング更新 */
+	NowLoading.Progress(90);
+
+	// メニュー
+	GameMenu::Init();
+
+	// BGM
+	BackMusic[0].LoadSound("data/BGM/tutorial.wav");
+	BackMusic[1].LoadSound("data/BGM/tutorialBack.wav");
+
+	/* ローディング更新&終了 */
 	NowLoading.Progress(100);
 	NowLoading.Uninit();
 }
@@ -127,7 +147,7 @@ void GameSystem::Uninit(void)
 	Notes = NULL;
 
 	// プレイヤー
-	TestPlayer.Uninit();
+	MainPlayer.Uninit();
 
 	// 前後壁
 	OnSideBG[0].Uninit();
@@ -149,6 +169,16 @@ void GameSystem::Uninit(void)
 
 	// オプションロゴ
 	LogoOption.Release();
+
+	// カウントダウン
+	Countdown.Release();
+
+	// メニュー
+	GameMenu::Uninit();
+
+	// BGM
+	BackMusic[0].Release();
+	BackMusic[1].Release();
 }
 
 //----更新--------
@@ -163,10 +193,52 @@ void GameSystem::Update(void)
 	}
 #endif // !_DEBUG
 
-	if (GetKeyboardTrigger(DIK_L))
+
+	// ゲームの再生、停止
+	if (GetKeyboardTrigger(DIK_ESCAPE))
 	{
-		SetGameFlag(FLAG_GAME_PLAYING, FT_OR);
+		if (GameFlag & FLAG_GAME_PLAYING)
+		{
+			GameFlag &= ~FLAG_GAME_PLAYING;
+
+			BackMusic[0].Stop();
+			BackMusic[1].Stop();
+
+			GameMenu::Open();
+		}
+		else
+		{
+			GameMenu::Close();
+			Countdown.Set(60, 3, 50, 100);
+		}
 	}
+
+	// サウンド更新
+	if (GameFlag & FLAG_GAME_MAPSIDES)
+	{
+		BackMusic[0].Volume(VOLUME_MIN);
+		BackMusic[1].Volume(VOLUME_MAX);
+		PrintDebugProcess("裏BGM演奏中\n");
+	}
+	else
+	{
+		BackMusic[0].Volume(VOLUME_MAX);
+		BackMusic[1].Volume(VOLUME_MIN);
+		PrintDebugProcess("表BGM演奏中\n");
+	}
+
+
+#ifdef _DEBUG
+	if (GetKeyboardTrigger(DIK_RETURN))
+	{
+		if (GetKeyboardPress(DIK_LSHIFT))
+		{
+			// リザルトへ
+			CSFade::SetFade(SCENE_RESULT);
+		}
+	}
+#endif // _DEBUG
+
 
 	if (GameFlag & FLAG_GAME_PLAYING)
 	{
@@ -188,7 +260,7 @@ void GameSystem::Update(void)
 
 		if (GameCounter == Notes[NotesCounter].Timing - 8)
 		{
-			CallGuideUI(TestPlayer.GetPosition() + D3DXVECTOR3(0.0f, 46.0f, 10.0f));
+			CallGuideUI(MainPlayer.GetPosition() + D3DXVECTOR3(0.0f, 46.0f, 10.0f));
 		}
 		if (GameCounter == Notes[NotesCounter].Timing + 12)
 		{
@@ -220,7 +292,7 @@ void GameSystem::Update(void)
 		GameCounter++;
 
 		// プレイヤー
-		if (TestPlayer.Update())
+		if (MainPlayer.Update())
 		{
 			SetGameFlag(FLAG_GAME_PLAYING, FT_DELETE);
 			SetGameScene(SCENE_RESULT);
@@ -236,6 +308,7 @@ void GameSystem::Update(void)
 		}
 	}
 
+
 	/* UI */
 	// HP
 	HitPointUI.Update();
@@ -243,6 +316,31 @@ void GameSystem::Update(void)
 	// 背景ポリゴン
 
 	// オプションロゴ
+
+	// メニュー
+	if (GameMenu::Update())
+	{
+		GameMenu::Close();
+		Countdown.Set(60, 3, 50, 100);
+	}
+
+	// カウントダウン
+	if (!(GameFlag & FLAG_GAME_PLAYING) && !GameMenu::Check())
+	{
+		if (Countdown.ActiveCheck())
+		{
+			Countdown.Animation();
+		}
+		else
+		{
+			GameFlag |= FLAG_GAME_PLAYING;
+
+			// 再生
+			BackMusic[0].Play(E_DS8_FLAG_LOOP);
+			BackMusic[1].Play(E_DS8_FLAG_LOOP);
+			BackMusic[1].Volume(VOLUME_MIN);
+		}
+	}
 
 	// デバッグ
 	if (SetGameFlag(FLAG_GAME_NEXTSIDES, FT_CHECK))
@@ -268,7 +366,7 @@ void GameSystem::Draw(void)
 
 	/* ステージ */
 	// プレイヤー
-	TestPlayer.Draw();
+	MainPlayer.Draw();
 
 	// 前後壁&フィールド
 	if (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
@@ -294,6 +392,12 @@ void GameSystem::Draw(void)
 	// オプションロゴ
 	LogoOption.Draw();
 
+	// カウントダウン
+	if (Countdown.ActiveCheck())
+		Countdown.Draw();
+
+	// メニュー描画
+	GameMenu::Draw();
 }
 
 //----GuideUI呼び出し--------
@@ -306,18 +410,10 @@ void GameSystem::CallGuideUI(D3DXVECTOR3 pos)
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-LPDIRECTSOUNDBUFFER8 g_pBGM[2]; // BGM用バッファ
-
 #ifdef _DEBUG
 UICNotesLane NotesLane;
-UICNotes UINotes[NOTES_UI_MAX];
+UICNotes     UINotes[NOTES_UI_MAX];
 #endif // DEBUG
-
-LPDIRECT3DTEXTURE9 TutorialObjTex = NULL;
-C3DPolygonObject TutorialObjON[8][2];
-C3DPolygonObject TutorialObjOF[8][2];
-
-GameSystem GameSys;
 
 
 //=============================================================================
@@ -331,48 +427,8 @@ HRESULT InitGame(void)
 	// カメラの初期化
 	InitCamera();
 
-	// オブジェクト
-	D3DXCreateTextureFromFile(GetDevice(), TUTORIAL_OBJ01, &TutorialObjTex);
-	if (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			TutorialObjOF[i][0].LoadTexture(TutorialObjTex);
-			TutorialObjOF[i][1].LoadTexture(TutorialObjTex);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			TutorialObjON[i][0].LoadTexture(TutorialObjTex);
-			TutorialObjON[i][1].LoadTexture(TutorialObjTex);
-		}
-	}
-
 	// ゲーム
-	GameSys.Init();
-
-	int cnt = 0;
-	float posX = 0.0f;
-	for (int i = 0; i < 8; i++)
-	{
-		posX = (float)(GameSys.Notes[cnt].Timing * 3 + 30 + 50);
-		TutorialObjON[i][0].Init(D3DXVECTOR3(posX, 50.0f, -100.0f), D3DXVECTOR2(50, 50));
-		posX -= 45.0f;
-		TutorialObjON[i][1].Init(D3DXVECTOR3(posX, 50.0f, -50.0f), D3DXVECTOR3(0.0f, 1.57f, 0.0f), D3DXVECTOR2(50, 50));
-		cnt++;
-		
-		posX = (float)(GameSys.Notes[cnt].Timing * 3 + 30 + 50);
-		TutorialObjOF[i][0].Init(D3DXVECTOR3(posX, 50.0f, -100.0f), D3DXVECTOR2(50, 50));
-		posX -= 45.0f;
-		TutorialObjOF[i][1].Init(D3DXVECTOR3(posX, 50.0f, -50.0f), D3DXVECTOR3(0.0f, 1.57f, 0.0f), D3DXVECTOR2(50, 50));
-		cnt++;
-	}
-
-	// 音楽ロード
-	g_pBGM[0] = LoadSound(BGM_TUTORIAL);
-	g_pBGM[1] = LoadSound(BGM_TUTORIAL_BACK);
+	GameSystem::Init();
 
 	// GameFlagを初期化
 	SetGameFlag(FLAG_GAME_INIT, FT_UPDATE);
@@ -391,10 +447,10 @@ HRESULT InitGame(void)
 	// UI
 	int no = 0;
 	int fc = 0;
-	for (int i = 0; GameSys.Notes[i].Timing - 300 < 0; i++)
+	for (int i = 0; GameSystem::Notes[i].Timing - 300 < 0; i++)
 	{
 		no = CallNotesUI();
-		fc = 300 - GameSys.Notes[i].Timing;
+		fc = 300 - GameSystem::Notes[i].Timing;
 		for (int c = 0; c < fc; c++)
 		{
 			UINotes[no].Update();
@@ -410,21 +466,6 @@ HRESULT InitGame(void)
 //=============================================================================
 void UninitGame(void)
 {
-	if (TutorialObjTex != NULL)
-	{
-		TutorialObjTex->Release();
-		TutorialObjTex = NULL;
-	}
-
-	for (int i = 0; i < 8; i++)
-	{
-		TutorialObjON[i][0].Release();
-		TutorialObjON[i][1].Release();
-		TutorialObjOF[i][0].Release();
-		TutorialObjOF[i][1].Release();
-	}
-
-
 	// ライトの終了処理
 	UninitLight();
 
@@ -432,21 +473,7 @@ void UninitGame(void)
 	UninitCamera();
 
 	// ゲーム
-	GameSys.Uninit();
-
-	// サウンド終了処理
-	StopSound(g_pBGM[0]);
-	StopSound(g_pBGM[1]);
-	if (g_pBGM[0] != NULL)
-	{
-		g_pBGM[0]->Release();
-		g_pBGM[0] = NULL;
-	}
-	if (g_pBGM[1] != NULL)
-	{
-		g_pBGM[1]->Release();
-		g_pBGM[1] = NULL;
-	}
+	GameSystem::Uninit();
 
 
 #ifdef _DEBUG
@@ -468,63 +495,14 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	// カメラ更新
-	UpdateCamera(GameSys.TestPlayer.GetPosition());
+	UpdateCamera(GameSystem::MainPlayer.GetPosition());
 
 	// ゲーム
-	GameSys.Update();
+	GameSystem::Update();
 
 #ifdef _DEBUG
-	// ゲームの再生、停止
-	if (GetKeyboardTrigger(DIK_P))
+	if (GameSystem::GameFlag & FLAG_GAME_PLAYING)
 	{
-		if (GameSys.GameFlag & FLAG_GAME_PLAYING)
-		{
-			GameSys.GameFlag &= ~FLAG_GAME_PLAYING;
-
-			StopSound(g_pBGM[0]);
-			StopSound(g_pBGM[1]);
-		}
-		else
-		{
-			GameSys.GameFlag |= FLAG_GAME_PLAYING;
-
-			// 再生
-			PlaySound(g_pBGM[0], E_DS8_FLAG_LOOP);
-			PlaySound(g_pBGM[1], E_DS8_FLAG_LOOP);
-			VolumeControl(g_pBGM[1], VOLUME_MIN);
-		}
-	}
-
-	if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
-	{
-		// リザルトへ
-		CSFade::SetFade(SCENE_RESULT);
-	}
-#endif // _DEBUG
-
-	if (GameSys.GameFlag & FLAG_GAME_PLAYING)
-	{
-		// 再生
-		PlaySound(g_pBGM[0], E_DS8_FLAG_LOOP);
-		PlaySound(g_pBGM[1], E_DS8_FLAG_LOOP);
-		VolumeControl(g_pBGM[1], VOLUME_MIN);
-
-		// サウンド更新
-		if (GameSys.GameFlag & FLAG_GAME_MAPSIDES)
-		{
-			VolumeControl(g_pBGM[0], VOLUME_MIN);
-			VolumeControl(g_pBGM[1], VOLUME_MAX);
-			PrintDebugProcess("裏BGM演奏中\n");
-		}
-		else
-		{
-			VolumeControl(g_pBGM[0], VOLUME_MAX);
-			VolumeControl(g_pBGM[1], VOLUME_MIN);
-			PrintDebugProcess("表BGM演奏中\n");
-		}
-
-#ifdef _DEBUG
-		/* Keep */
 		// UIノーツレーン
 
 		// UIノーツ
@@ -536,8 +514,8 @@ void UpdateGame(void)
 				PrintDebugProcess("ノーツUI : No.%d 稼働中\n", iCnt);
 			}
 		}
-#endif // DEBUG
 	}
+#endif // DEBUG
 
 	PrintDebugProcess("現在の面 : (%d)\n", (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK) ? 1 : 0));
 
@@ -551,26 +529,8 @@ void DrawGame(void)
 	// カメラの設定
 	SetCamera();
 
-	// オブジェクト
-	if (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			TutorialObjOF[i][0].Draw();
-			TutorialObjOF[i][1].Draw();
-		}
-	}
-	else
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			TutorialObjON[i][0].Draw();
-			TutorialObjON[i][1].Draw();
-		}
-	}
-
 	// ゲーム
-	GameSys.Draw();
+	GameSystem::Draw();
 
 #ifdef _DEBUG
 	/* Keep */
@@ -597,22 +557,22 @@ UINT SetGameFlag(UINT flg, FLAGTYPE type)
 	switch (type)
 	{
 	case FT_CHANGE:
-		GameSys.GameFlag ^= flg;
+		GameSystem::GameFlag ^= flg;
 		break;
 	case FT_OR:
-		GameSys.GameFlag |= flg;
+		GameSystem::GameFlag |= flg;
 		break;
 	case FT_DELETE:
-		GameSys.GameFlag &= ~flg;
+		GameSystem::GameFlag &= ~flg;
 		break;
 	case FT_UPDATE:
-		GameSys.GameFlag = flg;
+		GameSystem::GameFlag = flg;
 		break;
 	case FT_CHECK:
-		return (GameSys.GameFlag & flg) ? 1 : 0;
+		return (GameSystem::GameFlag & flg) ? 1 : 0;
 	}
 
-	return GameSys.GameFlag;
+	return GameSystem::GameFlag;
 }
 
 #ifdef _DEBUG
@@ -637,6 +597,6 @@ int CallNotesUI(void)
 //=============================================================================
 int GetPlayerHP(void)
 {
-	return GameSys.PlayerHP;
+	return GameSystem::PlayerHP;
 }
 

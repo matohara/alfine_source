@@ -9,6 +9,8 @@
 
 #include "main.h"
 
+#include "Library\Counter.h"
+#include "Library\Sound.h"
 #include "Library\ObjectBase3D.h"
 #include "Library\ObjectBase2D.h"
 #include "Player.h"
@@ -30,6 +32,7 @@
 #define FLAG_GAME_PLAYING   (0x80000000)	// ゲーム中かどうか
 #define FLAG_GAME_MAPSIDES  (0x00000001)	// 現在の表裏 (0:表, 1:裏)
 #define FLAG_GAME_NEXTSIDES (0x00000002)	// 次になるべき表裏 (0:表, 1:裏)
+#define FLAG_GAME_MENU      (0x40000000)	// メニュー画面を開いているか
 #define FLAG_GAME_   (0x00000000)
 #define FLAG_GAME_INIT      (FLAG_GAME_NEXTSIDES)
 
@@ -79,38 +82,38 @@ private:
 class GameSystem
 {
 public:
-	PlayerB TestPlayer;
-	CNotes *Notes;
+	static DSound BackMusic[2];
 
-	GameField      OnSideField;
-	GameField      OffSideField;
-	GameBackGround OnSideBG[2];
-	GameBackGround OffSideBG[2];
+	static PlayerB MainPlayer;
+	static CNotes *Notes;
 
-	C2DObject   BackPolyUI;
-	C2DObject   LogoOption;
-	UICGuide    GuideUI;
-	UICHitPoint HitPointUI;
+	static GameField      OnSideField;
+	static GameField      OffSideField;
+	static GameBackGround OnSideBG[2];
+	static GameBackGround OffSideBG[2];
 
-	UINT GameFlag;
+	static CountDown   Countdown;
+	static C2DObject   BackPolyUI;
+	static C2DObject   LogoOption;
+	static UICGuide    GuideUI;
+	static UICHitPoint HitPointUI;
 
-	int GameCounter;
-	int NotesCounter;
-	int NotesCounter2;
-	int PlayerHP;
+	static UINT GameFlag;
+	static int  GameCounter;
+	static int  NotesCounter;
+	static int  NotesCounter2;
+	static int  PlayerHP;
 
 public:
-	GameSystem() {};
-	~GameSystem() {};
+	static void Init(void);
+	static void Uninit(void);
+	static void Update(void);
+	static void Draw(void);
 
-	void Init(void);
-	void Uninit(void);
-	void Update(void);
-	void Draw(void);
-
-	void CallGuideUI(D3DXVECTOR3 pos);
+	static void CallGuideUI(D3DXVECTOR3 pos);
 
 private:
+	GameSystem() {};
 
 };
 

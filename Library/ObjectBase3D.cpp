@@ -61,17 +61,20 @@ void C3DPolygonObject::Init(float posX, float posY, float posZ, float sizX, floa
 {
 	this->Position = D3DXVECTOR3(posX, posY, posZ);
 	this->Size = D3DXVECTOR2(sizX, sizY);
+	this->MakeVertex();
 }
 void C3DPolygonObject::Init(D3DXVECTOR3 pos, D3DXVECTOR2 size)
 {
 	this->Position = pos;
 	this->Size = size;
+	this->MakeVertex();
 }
 void C3DPolygonObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR2 size)
 {
 	this->Position = pos;
 	this->Rotation = rot;
 	this->Size = size;
+	this->MakeVertex();
 }
 
 //----描画処理--------
@@ -89,7 +92,7 @@ void C3DPolygonObject::Draw(void)
 		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);	// 条件 (D3DCMP_GREATER)
 	}
 
-	// ラインティングを無効にする (ライトを当てると変になる場合がある)
+	// ラインティングを無効にする (ライトを当てると変になる)
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	// ワールドマトリックスの初期化
@@ -118,7 +121,7 @@ void C3DPolygonObject::Draw(void)
 	// ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, NUM_POLYGON);
 
-	// ラインティングを無効にする (ライトを当てると変になる場合がある)
+	// ラインティングを有効に戻す
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 
 	// αテストを無効に
@@ -147,10 +150,10 @@ int C3DPolygonObject::MakeVertex(void)
 		VtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 		// 頂点座標の設定
-		pVtx[0].vtx = D3DXVECTOR3(-Size.x, Size.y, 0.0f);
-		pVtx[1].vtx = D3DXVECTOR3(Size.x, Size.y, 0.0f);
+		pVtx[0].vtx = D3DXVECTOR3(-Size.x,  Size.y, 0.0f);
+		pVtx[1].vtx = D3DXVECTOR3( Size.x,  Size.y, 0.0f);
 		pVtx[2].vtx = D3DXVECTOR3(-Size.x, -Size.y, 0.0f);
-		pVtx[3].vtx = D3DXVECTOR3(Size.x, -Size.y, 0.0f);
+		pVtx[3].vtx = D3DXVECTOR3( Size.x, -Size.y, 0.0f);
 
 		// 法線の設定
 		pVtx[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
@@ -249,5 +252,205 @@ void C3DPolygonObject::LoadObjectStatus(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 	this->Position = pos;
 	this->Rotation = rot;
 }
+
+
+/* 3D多数板ポリ */
+//----開放--------
+void C3DMultiPolygonObject::Release()
+{
+	if (VtxBuff != NULL)
+	{	// 頂点の開放
+		VtxBuff->Release();
+		VtxBuff = NULL;
+	}
+}
+
+
+/* 3D立方体 */
+//----コンストラクタ--------
+C3DCubeObject::C3DCubeObject()
+{
+	this->Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	this->Rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	this->Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+}
+void C3DCubeObject::LoadTexture(const char *texture)
+{
+	if (Texture != NULL)
+	{	// テクスチャの開放
+		Texture->Release();
+		Texture = NULL;
+	}
+	D3DXCreateTextureFromFile(GetDevice(), texture, &Texture);
+}
+void C3DCubeObject::Release()
+{
+	if (Texture != NULL)
+	{	// テクスチャの開放
+		Texture->Release();
+		Texture = NULL;
+	}
+}
+
+//----初期化------
+int  C3DCubeObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 size)
+{
+	this->Position = D3DXVECTOR3( pos.x,  pos.y,  pos.z);
+	this->Rotation = D3DXVECTOR3( rot.x,  rot.y,  rot.z);
+	this->Size     = D3DXVECTOR3(size.x, size.y, size.z);
+	return this->MakeVertex();
+}
+int  C3DCubeObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 size)
+{
+	this->Position = D3DXVECTOR3( pos.x,  pos.y,  pos.z);
+	this->Size     = D3DXVECTOR3(size.x, size.y, size.z);
+	return this->MakeVertex();
+}
+int  C3DCubeObject::Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float size)
+{
+	this->Position = D3DXVECTOR3(pos.x, pos.y, pos.z);
+	this->Rotation = D3DXVECTOR3(rot.x, rot.y, rot.z);
+	this->Size     = D3DXVECTOR3( size,  size,  size);
+	return this->MakeVertex();
+}
+int  C3DCubeObject::Init(D3DXVECTOR3 pos, float size)
+{
+	this->Position = D3DXVECTOR3(pos.x, pos.y, pos.z);
+	this->Size     = D3DXVECTOR3( size,  size,  size);
+	return this->MakeVertex();
+}
+
+//----頂点作成--------
+int  C3DCubeObject::MakeVertex()
+{
+	Face[0][0].vtx    = D3DXVECTOR3(-1.0f,  1.0f, -1.0f);//-Z
+	Face[0][1].vtx    = D3DXVECTOR3( 1.0f,  1.0f, -1.0f);
+	Face[0][2].vtx    = D3DXVECTOR3(-1.0f, -1.0f, -1.0f);
+	Face[0][3].vtx    = D3DXVECTOR3( 1.0f, -1.0f, -1.0f);
+	Face[0][0].normal = D3DXVECTOR3( 0.0f,  0.0f, -1.0f);
+	Face[0][1].normal = D3DXVECTOR3( 0.0f,  0.0f, -1.0f);
+	Face[0][2].normal = D3DXVECTOR3( 0.0f,  0.0f, -1.0f);
+	Face[0][3].normal = D3DXVECTOR3( 0.0f,  0.0f, -1.0f);
+
+	Face[1][0].vtx    = D3DXVECTOR3( 1.0f,  1.0f, -1.0f);//X
+	Face[1][1].vtx    = D3DXVECTOR3( 1.0f,  1.0f,  1.0f);
+	Face[1][2].vtx    = D3DXVECTOR3( 1.0f, -1.0f, -1.0f);
+	Face[1][3].vtx    = D3DXVECTOR3( 1.0f, -1.0f,  1.0f);
+	Face[1][0].normal = D3DXVECTOR3( 1.0f,  0.0f,  0.0f);
+	Face[1][1].normal = D3DXVECTOR3( 1.0f,  0.0f,  0.0f);
+	Face[1][2].normal = D3DXVECTOR3( 1.0f,  0.0f,  0.0f);
+	Face[1][3].normal = D3DXVECTOR3( 1.0f,  0.0f,  0.0f);
+
+	Face[2][0].vtx    = D3DXVECTOR3( 1.0f,  1.0f,  1.0f);//Z
+	Face[2][1].vtx    = D3DXVECTOR3(-1.0f,  1.0f,  1.0f);
+	Face[2][2].vtx    = D3DXVECTOR3( 1.0f, -1.0f,  1.0f);
+	Face[2][3].vtx    = D3DXVECTOR3(-1.0f, -1.0f,  1.0f);
+	Face[2][0].normal = D3DXVECTOR3( 0.0f,  0.0f,  1.0f);
+	Face[2][1].normal = D3DXVECTOR3( 0.0f,  0.0f,  1.0f);
+	Face[2][2].normal = D3DXVECTOR3( 0.0f,  0.0f,  1.0f);
+	Face[2][3].normal = D3DXVECTOR3( 0.0f,  0.0f,  1.0f);
+
+	Face[3][0].vtx    = D3DXVECTOR3(-1.0f,  1.0f,  1.0f);//-X
+	Face[3][1].vtx    = D3DXVECTOR3(-1.0f,  1.0f, -1.0f);
+	Face[3][2].vtx    = D3DXVECTOR3(-1.0f, -1.0f,  1.0f);
+	Face[3][3].vtx    = D3DXVECTOR3(-1.0f, -1.0f, -1.0f);
+	Face[3][0].normal = D3DXVECTOR3(-1.0f,  0.0f,  0.0f);
+	Face[3][1].normal = D3DXVECTOR3(-1.0f,  0.0f,  0.0f);
+	Face[3][2].normal = D3DXVECTOR3(-1.0f,  0.0f,  0.0f);
+	Face[3][3].normal = D3DXVECTOR3(-1.0f,  0.0f,  0.0f);
+
+	Face[4][0].vtx    = D3DXVECTOR3(-1.0f,  1.0f,  1.0f);//Y
+	Face[4][1].vtx    = D3DXVECTOR3( 1.0f,  1.0f,  1.0f);
+	Face[4][2].vtx    = D3DXVECTOR3(-1.0f,  1.0f, -1.0f);
+	Face[4][3].vtx    = D3DXVECTOR3( 1.0f,  1.0f, -1.0f);
+	Face[4][0].normal = D3DXVECTOR3( 0.0f,  1.0f,  0.0f);
+	Face[4][1].normal = D3DXVECTOR3( 0.0f,  1.0f,  0.0f);
+	Face[4][2].normal = D3DXVECTOR3( 0.0f,  1.0f,  0.0f);
+	Face[4][3].normal = D3DXVECTOR3( 0.0f,  1.0f,  0.0f);
+
+	Face[5][0].vtx    = D3DXVECTOR3(-1.0f, -1.0f, -1.0f);//-Y
+	Face[5][1].vtx    = D3DXVECTOR3( 1.0f, -1.0f, -1.0f);
+	Face[5][2].vtx    = D3DXVECTOR3(-1.0f, -1.0f,  1.0f);
+	Face[5][3].vtx    = D3DXVECTOR3( 1.0f, -1.0f,  1.0f);
+	Face[5][0].normal = D3DXVECTOR3( 0.0f, -1.0f,  0.0f);
+	Face[5][1].normal = D3DXVECTOR3( 0.0f, -1.0f,  0.0f);
+	Face[5][2].normal = D3DXVECTOR3( 0.0f, -1.0f,  0.0f);
+	Face[5][3].normal = D3DXVECTOR3( 0.0f, -1.0f,  0.0f);
+
+	for (int iCnt = 0; iCnt < 6; iCnt++)
+	{
+		Face[iCnt][0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		Face[iCnt][1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		Face[iCnt][2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		Face[iCnt][3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+		Face[iCnt][0].tex = D3DXVECTOR2(0.1f, 0.1f);
+		Face[iCnt][1].tex = D3DXVECTOR2(0.9f, 0.1f);
+		Face[iCnt][2].tex = D3DXVECTOR2(0.1f, 0.9f);
+		Face[iCnt][3].tex = D3DXVECTOR2(0.9f, 0.9f);
+	}
+
+	return 0;
+}
+
+//----描画処理--------
+void C3DCubeObject::Draw(void)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	D3DXMATRIX mtxScl, mtxRot, mtxTranslate, mtxWorld;
+
+	// αテスト設定
+	//if (AlphaTestSwitch(0))
+	{
+		// αテストを有効に
+		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);		// ON
+		pDevice->SetRenderState(D3DRS_ALPHAREF, 125/*ALPHA_TEST_VALUE*/);	// 比較するαの値
+		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);	// 条件 (D3DCMP_GREATER)
+	}
+
+	// ラインティングを無効にする (ライトを当てると変になる)
+	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+	// ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&mtxWorld);
+
+	// サイズを反映
+	D3DXMatrixScaling(&mtxScl, Size.x, Size.y, Size.z);
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScl);
+
+	// 回転を反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, Rotation.y, Rotation.x, Rotation.z);
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot);
+
+	// 移動を反映
+	D3DXMatrixTranslation(&mtxTranslate, Position.x, Position.y, Position.z);
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTranslate);
+
+	// ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &mtxWorld);
+
+	// 頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	// テクスチャの設定
+	pDevice->SetTexture(0, Texture);
+
+	// ポリゴンの描画
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, Face[0], sizeof(VERTEX_3D));
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, Face[1], sizeof(VERTEX_3D));
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, Face[2], sizeof(VERTEX_3D));
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, Face[3], sizeof(VERTEX_3D));
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, Face[4], sizeof(VERTEX_3D));
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, Face[5], sizeof(VERTEX_3D));
+
+	// ラインティングを有効に戻す
+	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+	// αテストを無効に
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+}
+
+
 
 

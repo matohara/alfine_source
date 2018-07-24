@@ -154,6 +154,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GuideUI.cpp" />
     <ClCompile Include="HPUI.cpp" />
+    <ClCompile Include="Library\Counter.cpp" />
     <ClCompile Include="Library\DebugProcess.cpp" />
     <ClCompile Include="Library\Fade.cpp" />
     <ClCompile Include="Library\Input.cpp" />
@@ -163,11 +164,13 @@
     <ClCompile Include="Library\ObjectBase3D.cpp" />
     <ClCompile Include="Library\Sound.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NotesUI.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageSelect.cpp" />
+    <ClCompile Include="Stage\StageBase.cpp" />
     <ClCompile Include="StatusBarUI.cpp" />
     <ClCompile Include="title.cpp" />
   </ItemGroup>
@@ -178,21 +181,26 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GuideUI.h" />
     <ClInclude Include="HPUI.h" />
+    <ClInclude Include="Library\Counter.h" />
     <ClInclude Include="Library\DebugProcess.h" />
     <ClInclude Include="Library\Fade.h" />
     <ClInclude Include="Library\Input.h" />
     <ClInclude Include="Library\Light.h" />
     <ClInclude Include="Library\LinkLibrary.h" />
     <ClInclude Include="Library\Loading.h" />
+    <ClInclude Include="Library\Math.h" />
     <ClInclude Include="Library\ObjectBase2D.h" />
     <ClInclude Include="Library\ObjectBase3D.h" />
     <ClInclude Include="Library\Sound.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="NotesUI.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageSelect.h" />
+    <ClInclude Include="Stage\StageBase.h" />
+    <ClInclude Include="Stage\STutorial.h" />
     <ClInclude Include="StatusBarUI.h" />
     <ClInclude Include="title.h" />
   </ItemGroup>

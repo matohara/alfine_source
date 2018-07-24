@@ -314,7 +314,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	CSFade::MakeVertex();
 
 	// サウンド初期化
-	InitSound(hWnd);
+	DirectSound::Init(hWnd);
 
 	// タイトルシーンにセット
 	SetGameScene(SCENE_TITLE);
@@ -348,7 +348,7 @@ void Uninit(void)
 	UninitDebugProcess();
 
 	// サウンド終了処理
-
+	DirectSound::Uninit();
 }
 
 //=============================================================================
@@ -385,10 +385,6 @@ void Update(void)
 	case SCENE_GAME:
 		// ゲームシーンの更新
 		UpdateGame();
-		if (GetKeyboardTrigger(DIK_ESCAPE))
-		{
-
-		}
 		break;
 	case SCENE_RESULT:
 		// リザルトシーンの更新処理
@@ -481,7 +477,7 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 GAMESCENE SetGameScene(GAMESCENE scene)
 {
 	/* 指定シーンが同じ場合は戻る */
-	if ((g_GameScene == scene) || (scene == SCENE_MAX))
+	if (scene == SCENE_MAX)
 	{
 		return g_GameScene;
 	}

@@ -70,7 +70,9 @@ public:
 	void Scaling(float moveRate);
 	void FollowingFocus(D3DXVECTOR3 correction);
 	void Tracking(D3DXVECTOR3 target);
+#ifdef _DEBUG
 	void UNIQ_DebugMove(void);
+#endif // _DEBUG
 
 	D3DXVECTOR3 GetPosition(void);
 	D3DXVECTOR3 GetFocus(void);

@@ -1,64 +1,56 @@
 //=============================================================================
 //
-// サウンド処理 [sound.cpp]
+// サウンド処理 <Sound.cpp>
 // Author : 初 景新
 //
 //=============================================================================
 #include "Sound.h"
 
-// おまじない
+// ファイルをリンク
 #pragma comment ( lib, "dxguid.lib" )
 #pragma comment ( lib, "dsound.lib" )
 #pragma comment ( lib, "winmm.lib" )
 
-//*****************************************************************************
-// サウンドファイルのパス (hの通しナンバーと合わせること)
-//*****************************************************************************
-const TCHAR* c_soundFilename[] = {
-	_T("data/BGM/tutorial.wav"),
-	_T("data/BGM/tutorialBack.wav"),
-};
 
-//*****************************************************************************
-// グローバル変数
-//*****************************************************************************
-IDirectSound8 *g_pDirectSound = NULL;	// サウンドインターフェース
+// サウンドインターフェース
+IDirectSound8 *DirectSound::DirectSoundInterface;
 
 
-//=============================================================================
-// 初期化処理
-// hWnd:ウィンドウハンドル
-//=============================================================================
-HRESULT InitSound(HWND hWnd)
+//----初期化処理-------
+/* hWnd:ウィンドウハンドル */
+HRESULT DirectSound::Init(HWND hWnd)
 {
 	// DirectSoundオブジェクトの作成
-	if (FAILED(DirectSoundCreate8(NULL, &g_pDirectSound, NULL)))
+	if (FAILED(DirectSoundCreate8(NULL, &DirectSoundInterface, NULL)))
 		return E_FAIL;
 
 	// 協調レベル設定 
-	if (FAILED(g_pDirectSound->SetCooperativeLevel(hWnd, DSSCL_PRIORITY)))
+	if (FAILED(DirectSoundInterface->SetCooperativeLevel(hWnd, DSSCL_PRIORITY)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-//=============================================================================
-// 終了処理
-//=============================================================================
-void UninitSound(void)
+//----終了処理--------
+void    DirectSound::Uninit(void)
 {
-	if( g_pDirectSound != NULL )
+	if( DirectSoundInterface != NULL )
 	{
-		g_pDirectSound->Release();
-		g_pDirectSound = NULL;
+		DirectSoundInterface->Release();
+		DirectSoundInterface = NULL;
 	}
 }
 
-//=============================================================================
-// サウンドロード
-// no:サウンドナンバー（ヘッダに定義された列挙型定数）
-//=============================================================================
-LPDIRECTSOUNDBUFFER8 LoadSound(int no)
+
+//----コンストラクタ--------
+DirectSound::DirectSound()
+{
+	SoundBuffer = NULL;
+}
+
+//----サウンドロード--------
+/* soundFile : 読み込む音楽ファイル名 */
+LPDIRECTSOUNDBUFFER8 DirectSound::LoadSound(const char *soundFile)
 {
 	// MMIO = マルチメディア入出力、の略。
 	LPDIRECTSOUNDBUFFER  pBaseBuffer = NULL;// 曲データの総合バッファ
@@ -78,7 +70,7 @@ LPDIRECTSOUNDBUFFER8 LoadSound(int no)
 
 	// 1.ハンドルをもとにファイルを開く
 	memset(&mmioInfo, 0, sizeof(MMIOINFO));
-	hMmio = mmioOpen((LPSTR)c_soundFilename[no], &mmioInfo, MMIO_READ);
+	hMmio = mmioOpen((LPSTR)soundFile, &mmioInfo, MMIO_READ);
 	if (!hMmio)
 		return NULL;
 
@@ -126,21 +118,21 @@ LPDIRECTSOUNDBUFFER8 LoadSound(int no)
 	char *pData = new char[dataChunk.cksize];					// 必要な大きさの領域を確保して
 	size = mmioRead(hMmio, (HPSTR)pData, dataChunk.cksize);		// データを読み込む
 
-	if (size != dataChunk.cksize)  		// 正しく読み込めなかったら異常終了
+	if (size != dataChunk.cksize)		// 正しく読み込めなかったら異常終了
 	{
 		delete[] pData;
 		return NULL;
 	}
 
 	// 6.曲を読み込む「セカンダリバッファ」を用意
-	ZeroMemory(&buff, sizeof(DSBUFFERDESC));		// まず初期化
+	ZeroMemory(&buff, sizeof(DSBUFFERDESC));	// まず初期化
 	buff.dwSize = sizeof(DSBUFFERDESC);			// そこから各種設定
 	buff.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_LOCDEFER | DSBCAPS_CTRLVOLUME;
 	buff.dwBufferBytes = size;
 	buff.lpwfxFormat = &pcm;
 
 	// 総合バッファを作る
-	if (FAILED(g_pDirectSound->CreateSoundBuffer(&buff, &pBaseBuffer, NULL)))
+	if (FAILED(DirectSoundInterface->CreateSoundBuffer(&buff, &pBaseBuffer, NULL)))
 		return NULL;
 
 	// サウンドバッファを取り出す
@@ -161,60 +153,56 @@ LPDIRECTSOUNDBUFFER8 LoadSound(int no)
 	// バッファロック解除
 	pBuffer->Unlock(pBlock, dwSize, 0, 0);
 
-	// セカンダリバッファを返してようやく完了...
+	// セカンダリバッファを保存して完了
+	this->SoundBuffer = pBuffer;
 	return pBuffer;
 }
 
-//=============================================================================
-// 音を鳴らす
-// pBuffer:音を鳴らしたいサウンドデータのセカンダリバッファ
-// flag   :1(E_DS8_FLAG_LOOP)ならループ再生
-//=============================================================================
-void PlaySound(LPDIRECTSOUNDBUFFER8 pBuffer, int flag/*=0*/)
+//----音を鳴らす--------
+/* flag : 1(E_DS8_FLAG_LOOP)ならループ再生 */
+void DirectSound::Play(int flag)
 {	// 続きから鳴らすので、最初から鳴らしたい場合はSetCurrentPosition(0)をすること
-	pBuffer->Play(0, 0, flag);
+	this->SoundBuffer->Play(0, 0, flag);
 }
 
-//=============================================================================
-// 音を止める
-//=============================================================================
-void StopSound(LPDIRECTSOUNDBUFFER8 pBuffer)
+//----音を止める--------
+void DirectSound::Stop()
 {
 	DWORD status;
-
-	pBuffer->GetStatus(&status);
+	this->SoundBuffer->GetStatus(&status);
 	if (status & DSBSTATUS_PLAYING)	// 鳴っていたら
 	{
-		pBuffer->Stop();	// 意味的にはPauseになる。
+		this->SoundBuffer->Stop();	// 意味的にはPauseになる。
 	}
 }
 
-//=============================================================================
-// 音量ボリューム設定を変更する
-// pBuffer:サウンドデータのセカンダリバッファ
-// volume :設定したいヴォリューム(0～-10,000)
-//=============================================================================
-long VolumeControl(LPDIRECTSOUNDBUFFER8 pBuffer, LONG volume)
+//----音量ボリューム設定を変更する--------
+/* volume : 設定したいヴォリューム(0～-10,000) */
+void DirectSound::Volume(LONG volume)
 {
 	//! ボリューム設定を変更する.
-	pBuffer->SetVolume(volume);
-
-	return volume;
+	this->SoundBuffer->SetVolume(volume);
 }
 
-//=============================================================================
-// 再生中かどうか調べる
-// pBuffer:音を鳴らしたいサウンドデータのセカンダリバッファ
-//=============================================================================
-bool IsPlaying(LPDIRECTSOUNDBUFFER8 pBuffer)
+//----再生中かどうか調べる--------
+bool DirectSound::CheckPlaying()
 {
 	DWORD status;
-
-	pBuffer->GetStatus(&status);
+	this->SoundBuffer->GetStatus(&status);
 	if (status & DSBSTATUS_PLAYING)
 	{
 		return true;
 	}
 	return false;
+}
+
+//----サウンドバッファの開放--------
+void DirectSound::Release()
+{
+	if (this->SoundBuffer != NULL)
+	{
+		this->SoundBuffer->Release();
+		this->SoundBuffer = NULL;
+	}
 }
 
