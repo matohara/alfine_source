@@ -1,5 +1,6 @@
 #include "ObjectBase2D.h"
 #include <math.h>
+#include "Math.h"
 
 
 /* ÅŠî’êƒNƒ‰ƒX */
@@ -241,18 +242,17 @@ int  C2DObject::Init(float posX, float posY, float sizX, float sizY)
 }
 void C2DObject::SetVertex()
 {
-	float risc = 1.41421356f;
-	Vertex[0].vtx.x = Position.x - cosf((D3DX_PI * 0.25f) + Angle) * risc * Size.x * Scale;
-	Vertex[0].vtx.y = Position.y - sinf((D3DX_PI * 0.25f) + Angle) * risc * Size.y * Scale;
+	Vertex[0].vtx.x = Position.x - cosf((D3DX_PI * 0.25f) + Angle) * ROOT2 * Size.x * Scale;
+	Vertex[0].vtx.y = Position.y - sinf((D3DX_PI * 0.25f) + Angle) * ROOT2 * Size.y * Scale;
 	Vertex[0].vtx.z = 0.0f;
-	Vertex[1].vtx.x = Position.x + cosf((D3DX_PI * 0.25f) - Angle) * risc * Size.x * Scale;
-	Vertex[1].vtx.y = Position.y - sinf((D3DX_PI * 0.25f) - Angle) * risc * Size.y * Scale;
+	Vertex[1].vtx.x = Position.x + cosf((D3DX_PI * 0.25f) - Angle) * ROOT2 * Size.x * Scale;
+	Vertex[1].vtx.y = Position.y - sinf((D3DX_PI * 0.25f) - Angle) * ROOT2 * Size.y * Scale;
 	Vertex[1].vtx.z = 0.0f;
-	Vertex[2].vtx.x = Position.x - cosf((D3DX_PI * 0.25f) - Angle) * risc * Size.x * Scale;
-	Vertex[2].vtx.y = Position.y + sinf((D3DX_PI * 0.25f) - Angle) * risc * Size.y * Scale;
+	Vertex[2].vtx.x = Position.x - cosf((D3DX_PI * 0.25f) - Angle) * ROOT2 * Size.x * Scale;
+	Vertex[2].vtx.y = Position.y + sinf((D3DX_PI * 0.25f) - Angle) * ROOT2 * Size.y * Scale;
 	Vertex[2].vtx.z = 0.0f;
-	Vertex[3].vtx.x = Position.x + cosf((D3DX_PI * 0.25f) + Angle) * risc * Size.x * Scale;
-	Vertex[3].vtx.y = Position.y + sinf((D3DX_PI * 0.25f) + Angle) * risc * Size.y * Scale;
+	Vertex[3].vtx.x = Position.x + cosf((D3DX_PI * 0.25f) + Angle) * ROOT2 * Size.x * Scale;
+	Vertex[3].vtx.y = Position.y + sinf((D3DX_PI * 0.25f) + Angle) * ROOT2 * Size.y * Scale;
 	Vertex[3].vtx.z = 0.0f;
 }
 void C2DObject::SetVertex(int no, D3DXVECTOR3 vtx)
@@ -312,9 +312,9 @@ UIBackGround::UIBackGround()
 UIBackGround::UIBackGround(const char *texture)
 {
 	this->LoadTexture(texture);
-	Vertex[0].vtx = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	Vertex[1].vtx = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
-	Vertex[2].vtx = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
+	Vertex[0].vtx = D3DXVECTOR3(        0.0f,          0.0f, 0.0f);
+	Vertex[1].vtx = D3DXVECTOR3(SCREEN_WIDTH,          0.0f, 0.0f);
+	Vertex[2].vtx = D3DXVECTOR3(        0.0f, SCREEN_HEIGHT, 0.0f);
 	Vertex[3].vtx = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 }
 

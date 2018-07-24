@@ -7,13 +7,7 @@
 #include "Camera.h"
 #include "Library\Input.h"
 
-//*****************************************************************************
 // マクロ定義
-//*****************************************************************************
-//#define	CAMERA_GAZE_X		(0.0f)		// カメラ1(Main)視点の初期位置(X座標)
-//#define	CAMERA_GAZE_Y		( 120.0f)	// カメラ1(Main)視点の初期位置(Y座標)
-//#define	CAMERA_GAZE_Z		(-400.0f)	// カメラ1(Main)視点の初期位置(Z座標)
-
 #define GAMECAMERA_XLIMIT_MIN (    0)
 #define GAMECAMERA_XLIMIT_MAX (16400)
 
@@ -21,11 +15,11 @@
 #define CtoA_INTERVAL_MIN	(240.0f)	// カメラと注視点間の最小距離
 #define CAMERA_ANGLE		(10)
 
+#ifdef _DEBUG
 int g_iAngle = CAMERA_ANGLE;
+#endif // _DEBUG
 
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
+
 //----コンストラクタ--------
 CCamera::CCamera()
 {
@@ -82,6 +76,13 @@ void CCamera::Translation(D3DXVECTOR2 moveRate)
 		Gaze += LeftVec *  moveRate.x * CAMERA_MOVE_VALUE;
 		Gaze += FrontVec * moveRate.y * CAMERA_MOVE_VALUE;
 	}
+
+#ifdef _DEBUG
+	PrintDebugProcess("デバッグカメラ位置 : (%v)\n", Position);
+	PrintDebugProcess("デバッグカメラ視線 : (%v)\n", Gaze);
+	PrintDebugProcess("デバッグカメラAngl : (%v)\n", Angle);
+#endif // _DEBUG
+
 }
 
 //----前後移動--------
@@ -156,6 +157,7 @@ void CCamera::Tracking(D3DXVECTOR3 target)
 }
 
 //----デバッグ軌道--------
+#ifdef _DEBUG
 void CCamera::UNIQ_DebugMove(void)
 {
 	float move = 2.0f;
@@ -200,6 +202,7 @@ void CCamera::UNIQ_DebugMove(void)
 	PrintDebugProcess("カメラ視線 : (%f, %f, %f)\n", Gaze.x, Gaze.y, Gaze.z);
 	PrintDebugProcess("カメラ角度 : (%d)\n", g_iAngle);
 }
+#endif // _DEBUG
 
 //----視線先追従--------
 void CCamera::FollowingFocus(D3DXVECTOR3 correction)

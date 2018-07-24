@@ -28,6 +28,9 @@
     <Filter Include="ヘッダー ファイル\Game">
       <UniqueIdentifier>{5beeca72-d907-4020-9e21-53ac8677441e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Stage">
+      <UniqueIdentifier>{d8db9f87-14e8-4cbb-b94c-2fa51fba8db4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -95,6 +98,15 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Counter.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage\StageBase.cpp">
+      <Filter>ソース ファイル\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +178,21 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Counter.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Math.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage\StageBase.h">
+      <Filter>ソース ファイル\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage\STutorial.h">
+      <Filter>ソース ファイル\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
