@@ -5,9 +5,9 @@
 //
 //=============================================================================
 #include "title.h"
+#include "StageSelect.h"
 #include "Library\Input.h"
 #include "Library\Fade.h"
-
 
 //*****************************************************************************
 // マクロ定義
@@ -50,18 +50,19 @@ enum STATUSSTAGEROT
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-//C2DUIPolygonA StageSelectBack;
-//C2DUIMenuLogo StageSelectText;
-//C2DUIMenuLogo StageSelectLogo[SSS_MAX];				// ステージセレクト最大数宣言
-//STATUSSTAGESELECT SSStastus = SSS_TUTORIAL;
-//int 			SSSflag[SSS_MAX];					// バレルフラグ管理変数
-//int				SELECTflag;							// セレクトフラグ
-//bool			UPflag;								// 上移動フラグ
-//bool			DOWNflag;							// 下移動フラグ
-//
-//D3DXVECTOR2 selectsize;			// 選択した時のフレームの大きさ
-//D3DXVECTOR2 flamesize;			// フレームの大きさ
-//D3DXVECTOR2 speed;				// フレーム移動量
+UIBackGround	StageSelectBack;						// 背景格納変数
+C2DObject		StageSelectText;						// ステージセレクトメッセージ
+Barrel			StageSelectLogo[SSS_MAX];				// ステージセレクト最大数宣言
+
+STATUSSTAGESELECT SSStastus = SSS_TUTORIAL;
+int 			SSSflag[SSS_MAX];					// バレルフラグ管理変数
+int				SELECTflag;							// セレクトフラグ
+bool			UPflag;								// 上移動フラグ
+bool			DOWNflag;							// 下移動フラグ
+
+D3DXVECTOR2 selectsize;			// 選択した時のフレームの大きさ
+D3DXVECTOR2 flamesize;			// フレームの大きさ
+D3DXVECTOR2 speed;				// フレーム移動量
 
 //=============================================================================
 // 初期化処理
@@ -69,74 +70,72 @@ enum STATUSSTAGEROT
 HRESULT InitStageSelect(void)
 {
 
-	//// 背景テクスチャ
-	//StageSelectBack.Init(STAGESELECT_TEX_TUTORIAL);
+	// 背景テクスチャ
+	StageSelectBack.LoadTexture(STAGESELECT_TEX_TUTORIAL);
 
-	////フレームサイズの初期化
-	//selectsize = STAGESELECT_SELECT_SIZE;	// 選択した時のフレームの大きさ
-	//flamesize = STAGESELECT_FLAME_SIZE;		// フレームの大きさ
+	//フレームサイズの初期化
+	selectsize = STAGESELECT_SELECT_SIZE;		// 選択した時のフレームの大きさ
+	flamesize = STAGESELECT_FLAME_SIZE;			// フレームの大きさ
 
-	//// 移動量を格納
-	//speed.x = RelativeSX(FLAME_POS_X_PLUS);
-	//speed.y = FLAME_POS_Y_PLUS;
+	// 移動量を格納
+	speed.x = RelativeSX(FLAME_POS_X_PLUS);
+	speed.y = FLAME_POS_Y_PLUS;
 
-	//// セレクトフラグを選択中で初期化
-	//SELECTflag = ROT_SELECT;
+	// セレクトフラグを選択中で初期化
+	SELECTflag = ROT_SELECT;
 
-	//// 上移動を未使用で初期化
-	//UPflag = false;
+	// 上移動を未使用で初期化
+	UPflag = false;
 
-	//// 下移動を使用で初期化
-	//DOWNflag = true;
+	// 下移動を使用で初期化
+	DOWNflag = true;
 
-	//// 文字テクスチャ
-	//StageSelectText.Init(selectsize.x,				// テクスチャの横幅
-	//					selectsize.y+30,				// テクスチャの縦幅
-	//					RelativeSX(FLAME_POS_X),	// 配置位置X軸
-	//					SCREEN_CENTER_Y,			// 配置位置Y軸
-	//					STAGESELECT_TEXT);			// 読み込むテクスチャ
+	// 文字テクスチャ
+	StageSelectText.Init(RelativeSX(FLAME_POS_X),	// 配置位置X軸
+						SCREEN_CENTER_Y,			// 配置位置Y軸
+						selectsize.x,				// テクスチャの横幅
+						selectsize.y+30,			// テクスチャの縦幅
+						STAGESELECT_TEXT);			// 読み込むテクスチャ
 
-	//// ステージセレクトテクスチャ最大数初期化
-	//for (int i = 0;i < SSS_MAX;i++)
-	//{
+	// ステージセレクトテクスチャ最大数初期化
+	for (int i = 0;i < SSS_MAX;i++)
+	{
 
-	//	// 選択されているフレームだけ拡大
-	//	if (i == SSS_TUTORIAL)
-	//	{
+		// 選択されているフレームだけ拡大
+		if (i == SSS_TUTORIAL)
+		{
 
-	//		// 選択されている
-	//		SSSflag[i] = ROT_SELECT;
+			// 選択されている
+			SSSflag[i] = ROT_SELECT;
 
-	//		// 初起動時はチュートリアルを選択
-	//		StageSelectLogo[SSS_TUTORIAL].Init(selectsize.x,				// フレームテクスチャの横幅
-	//										   selectsize.y,				// フレームテクスチャの縦幅
-	//										   RelativeSX(FLAME_POS_X),		// 配置位置X軸
-	//										   SCREEN_CENTER_Y,				// 配置位置Y軸
-	//										   STAGESELECT_TEX_FLAME);		// 読み込むテクスチャ
-	//	}
+			// 初起動時はチュートリアルを選択
+			StageSelectLogo[SSS_TUTORIAL].Init(RelativeSX(FLAME_POS_X),		// 配置位置X軸
+											   SCREEN_CENTER_Y,				// 配置位置Y軸
+											   selectsize.x,				// フレームテクスチャの横幅
+											   selectsize.y,				// フレームテクスチャの縦幅
+											   STAGESELECT_TEX_FLAME);		// 読み込むテクスチャ
+		}
 
-	//	// それ以外は拡大無し
-	//	else
-	//	{
+		// それ以外は拡大無し
+		else
+		{
 
-	//		// 選択されているフレームより下に
-	//		SSSflag[i] = ROT_DOWN;
+			// 選択されているフレームより下に
+			SSSflag[i] = ROT_DOWN;
 
-	//		// フレームの初期化
-	//		StageSelectLogo[i].Init(flamesize.x,										// フレームテクスチャの横幅
-	//								flamesize.y,										// フレームテクスチャの縦幅
-	//								RelativeSX((FLAME_POS_X + (FLAME_POS_X_PLUS * i))),	// 配置位置X軸 (FLAME_POS_X_PLUS*i)ずれる
-	//								SCREEN_CENTER_Y + (FLAME_POS_Y_PLUS*i),				// 配置位置Y軸 (FLAME_POS_Y_PLUS*i)ずれる
-	//								STAGESELECT_TEX_FLAME);								// 読み込むテクスチャ
+			// フレームの初期化
+			StageSelectLogo[i].Init(RelativeSX((FLAME_POS_X + (FLAME_POS_X_PLUS * i))),	// 配置位置X軸 (FLAME_POS_X_PLUS*i)ずれる
+									SCREEN_CENTER_Y + (FLAME_POS_Y_PLUS*i),				// 配置位置Y軸 (FLAME_POS_Y_PLUS*i)ずれる
+									flamesize.x,										// フレームテクスチャの横幅
+									flamesize.y,										// フレームテクスチャの縦幅
+									STAGESELECT_TEX_FLAME);								// 読み込むテクスチャ
 
-	//		// 未選択色
-	//		StageSelectLogo[i].Vertex[0].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//		StageSelectLogo[i].Vertex[1].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//		StageSelectLogo[i].Vertex[2].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//		StageSelectLogo[i].Vertex[3].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			// 未選択色
+			StageSelectLogo[i].SetVertex(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
 
-	//	}
-	//}
+
+		}
+	}
 
 	return S_OK;
 }
@@ -146,13 +145,13 @@ HRESULT InitStageSelect(void)
 //=============================================================================
 void UninitStageSelect(void)
 {
-	//StageSelectBack.ReleaseBuffer();
+	StageSelectBack.Release();
 
-	//// ステージセレクト最大数メモリ解放
-	//for (int i = 0;i < SSS_MAX;i++)
-	//{
-	//	StageSelectLogo[i].ReleaseBuffer();
-	//}
+	// ステージセレクト最大数メモリ解放
+	for (int i = 0;i < SSS_MAX;i++)
+	{
+		StageSelectLogo[i].Release();
+	}
 }
 
 //=============================================================================
@@ -160,275 +159,254 @@ void UninitStageSelect(void)
 //=============================================================================
 void UpdateStageSelect(void)
 {
+	
+	// 決定キーを押されたら
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
 		CSFade::SetFade(SCENE_GAME);
 	}
-	//// ステージセレクト最大数更新処理
-	//for (int i = 0;i < SSS_MAX;i++)
-	//{
-	//	// エンターキーを押されたら
-	//	if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
-	//	{
-	//		// ステージセレクト
-	//		switch (SSStastus)
-	//		{
-	//		// チュートリアル
-	//		case SSS_TUTORIAL:
 
-	//			// 画面遷移:チュートリアル
-	//			CSFade::SetFade(SCENE_GAME);
-	//			break;
-	//		}
-	//	}
+	// ステージセレクト最大数更新処理
+	for (int i = 0;i < SSS_MAX;i++)
+	{
+		// エンターキーを押されたら
+		if ((GetKeyboardTrigger(DIK_RETURN)) || (IsButtonTriggered(0, BUTTON_X)))
+		{
+			// ステージセレクト
+			switch (SSStastus)
+			{
+			// チュートリアル
+			case SSS_TUTORIAL:
 
-	//	// ↑キーを押したら
-	//	else if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
-	//	{
-	//		// 上移動可能ならば
-	//		if (UPflag == true)
-	//		{
-	//			// 選択フレームより上の場合
-	//			if (SSSflag[i] == ROT_UP)
-	//			{
-	//				// 移動量を更新
-	//				StageSelectLogo[i].Position.x -= speed.x;
-	//				StageSelectLogo[i].Position.y += speed.y;
+				// 画面遷移:チュートリアル
+				CSFade::SetFade(SCENE_GAME);
+				break;
+			}
+		}
 
-	//				// セレクトフラグ、または一つ後ろのフラグが選択中だったら
-	//				if ((SELECTflag == ROT_SELECT) || (SSSflag[i + 1] == ROT_SELECT))
-	//				{
-	//					// テクスチャサイズ拡大
-	//					StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - selectsize.x, StageSelectLogo[i].Position.y - selectsize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + selectsize.x, StageSelectLogo[i].Position.y - selectsize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - selectsize.x, StageSelectLogo[i].Position.y + selectsize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + selectsize.x, StageSelectLogo[i].Position.y + selectsize.y, 0.0f);
+		// ↑キーを押したら
+		else if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
+		{
 
-	//					// カラー変更
-	//					StageSelectLogo[i].Vertex[0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//					StageSelectLogo[i].Vertex[1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//					StageSelectLogo[i].Vertex[2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//					StageSelectLogo[i].Vertex[3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			// 位置更新用変数を宣言
+			D3DXVECTOR2 move;
 
-	//					// フラグを選択フレームへ
-	//					SSSflag[i] = ROT_SELECT;
+			// 変数の初期化
+			move.x = 0;
+			move.y = 0;
 
-	//				}
+			// 上移動可能ならば
+			if (UPflag == true)
+			{
+				// 選択フレームより上の場合
+				if (SSSflag[i] == ROT_UP)
+				{
+					// 移動量を更新
+					move.x -= speed.x;
+					move.y += speed.y;
+					StageSelectLogo[i].LogoMove(move.x, move.y);
 
-	//				else
-	//				{
-	//					// テクスチャ更新
-	//					StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//				}
+					// セレクトフラグ、または一つ後ろのフラグが選択中だったら
+					if ((SELECTflag == ROT_SELECT) || (SSSflag[i + 1] == ROT_SELECT))
+					{
+						// テクスチャサイズ拡大
+						StageSelectLogo[i].LogoSize(selectsize.x, selectsize.y);
 
-	//				// セレクトフラグをフレーム上へ
-	//				SELECTflag = ROT_UP;
-	//			}
+						// カラー変更
+						StageSelectLogo[i].SetVertex(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 
-	//			// 選択フレームより下の場合
-	//			else if (SSSflag[i] == ROT_DOWN)
-	//			{
-	//				// 移動量を更新
-	//				StageSelectLogo[i].Position.x += speed.x;
-	//				StageSelectLogo[i].Position.y += speed.y;
+						// フラグを選択フレームへ
+						SSSflag[i] = ROT_SELECT;
 
+					}
 
-	//				// テクスチャ更新
-	//				StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
+					else
+					{
+						// テクスチャ更新
+						StageSelectLogo[i].LogoSize(flamesize.x, flamesize.y);
 
+					}
 
-	//				// セレクトフラグをフレーム下へ
-	//				SELECTflag = ROT_DOWN;
-	//			}
+					// セレクトフラグをフレーム上へ
+					SELECTflag = ROT_UP;
+				}
 
-	//			// 選択されているフレームなら
-	//			else if (SSSflag[i] == ROT_SELECT)
-	//			{
+				// 選択フレームより下の場合
+				else if (SSSflag[i] == ROT_DOWN)
+				{
+					// 移動量を更新
+					move += speed;
+					StageSelectLogo[i].LogoMove(move.x, move.y);
 
-	//				// 移動量を更新
-	//				StageSelectLogo[i].Position.x += speed.x;
-	//				StageSelectLogo[i].Position.y += speed.y;
+					// テクスチャ更新
+					StageSelectLogo[i].LogoSize(flamesize.x, flamesize.y);
 
-	//				// テクスチャサイズ縮小
-	//				StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
+					// セレクトフラグをフレーム下へ
+					SELECTflag = ROT_DOWN;
+				}
 
-	//				// カラー変更
-	//				StageSelectLogo[i].Vertex[0].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//				StageSelectLogo[i].Vertex[1].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//				StageSelectLogo[i].Vertex[2].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//				StageSelectLogo[i].Vertex[3].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				// 選択されているフレームなら
+				else if (SSSflag[i] == ROT_SELECT)
+				{
 
-	//				// 最後が選択されている場合
-	//				if (i == SSS_CRYSTAL)
-	//				{
-	//					// セレクトフラグを選択中に
-	//					SELECTflag = ROT_DOWN;
-	//				}
-	//				// それ以外
-	//				else
-	//				{
-	//					// セレクトフラグを選択中に
-	//					SELECTflag = ROT_SELECT;
-	//				}
+					// 移動量を更新
+					move += speed;
+					StageSelectLogo[i].LogoMove(move.x, move.y);
 
-	//				// フラグを選択フレーム下へ
-	//				SSSflag[i] = ROT_DOWN;
-
-	//			}
-	//		}
-
-	//	}
+					// テクスチャサイズ縮小
+					StageSelectLogo[i].LogoSize(flamesize.x, flamesize.y);
 
 
-	//	// ↓キーを押したらz
-	//	else if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
-	//	{
-	//		// 下移動可能ならば
-	//		if (DOWNflag == true)
-	//		{
+					// カラー変更
+					StageSelectLogo[i].SetVertex(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
 
-	//			// 選択フレームより上の場合
-	//			if (SSSflag[i] == ROT_UP)
-	//			{
-	//				// 移動量を更新
-	//				StageSelectLogo[i].Position.x += speed.x;
-	//				StageSelectLogo[i].Position.y -= speed.y;
+					// 最後が選択されている場合
+					if (i == SSS_CRYSTAL)
+					{
+						// セレクトフラグを選択中に
+						SELECTflag = ROT_DOWN;
+					}
+					// それ以外
+					else
+					{
+						// セレクトフラグを選択中に
+						SELECTflag = ROT_SELECT;
+					}
 
+					// フラグを選択フレーム下へ
+					SSSflag[i] = ROT_DOWN;
 
-	//				// テクスチャ更新
-	//				StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
+				}
+			}
 
-
-	//				// セレクトフラグをフレーム上へ
-	//				SELECTflag = ROT_UP;
-	//			}
-
-	//			// 選択フレームより下の場合
-	//			else if (SSSflag[i] == ROT_DOWN)
-	//			{
-	//				// 移動量を更新
-	//				StageSelectLogo[i].Position.x -= speed.x;
-	//				StageSelectLogo[i].Position.y -= speed.y;
+		}
 
 
-	//				// セレクトフラグを選択中だったら
-	//				if (SELECTflag == ROT_SELECT)
-	//				{
-	//					// テクスチャサイズ拡大
-	//					StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - selectsize.x, StageSelectLogo[i].Position.y - selectsize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + selectsize.x, StageSelectLogo[i].Position.y - selectsize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - selectsize.x, StageSelectLogo[i].Position.y + selectsize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + selectsize.x, StageSelectLogo[i].Position.y + selectsize.y, 0.0f);
+		// ↓キーを押したらz
+		else if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
+		{
 
-	//					// カラー変更
-	//					StageSelectLogo[i].Vertex[0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//					StageSelectLogo[i].Vertex[1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//					StageSelectLogo[i].Vertex[2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	//					StageSelectLogo[i].Vertex[3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			// 位置更新用変数を宣言
+			D3DXVECTOR2 move;
 
-	//					// フラグを選択フレームへ
-	//					SSSflag[i] = ROT_SELECT;
+			// 変数の初期化
+			move.x = 0;
+			move.y = 0;
 
-	//				}
+			// 下移動可能ならば
+			if (DOWNflag == true)
+			{
 
-	//				else
-	//				{
-	//					// テクスチャ更新
-	//					StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//					StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//				}
+				// 選択フレームより上の場合
+				if (SSSflag[i] == ROT_UP)
+				{
+					// 移動量を更新
+					move.x += speed.x;
+					move.y -= speed.y;
+					StageSelectLogo[i].LogoMove(move.x, move.y);
 
+					// テクスチャ更新
+					StageSelectLogo[i].LogoSize(flamesize.x, flamesize.y);
 
-	//				// セレクトフラグをフレーム下へ
-	//				SELECTflag = ROT_DOWN;
+					// セレクトフラグをフレーム上へ
+					SELECTflag = ROT_UP;
+				}
 
-	//			}
+				// 選択フレームより下の場合
+				else if (SSSflag[i] == ROT_DOWN)
+				{
+					// 移動量を更新
+					move -= speed;
+					StageSelectLogo[i].LogoMove(move.x, move.y);
 
-	//			// 選択されているフレームなら
-	//			else if (SSSflag[i] == ROT_SELECT)
-	//			{
-	//				// 移動量を更新
-	//				StageSelectLogo[i].Position.x += speed.x;
-	//				StageSelectLogo[i].Position.y -= speed.y;
+					// セレクトフラグを選択中だったら
+					if (SELECTflag == ROT_SELECT)
+					{
+						// テクスチャサイズ拡大
+						StageSelectLogo[i].LogoSize(selectsize.x, selectsize.y);
 
-	//				// テクスチャサイズ縮小
-	//				StageSelectLogo[i].Vertex[0].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[1].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y - flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[2].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x - flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
-	//				StageSelectLogo[i].Vertex[3].vtx = D3DXVECTOR3(StageSelectLogo[i].Position.x + flamesize.x, StageSelectLogo[i].Position.y + flamesize.y, 0.0f);
+						// カラー変更
+						StageSelectLogo[i].SetVertex(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 
-	//				// カラー変更
-	//				StageSelectLogo[i].Vertex[0].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//				StageSelectLogo[i].Vertex[1].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//				StageSelectLogo[i].Vertex[2].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-	//				StageSelectLogo[i].Vertex[3].diffuse = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+						// フラグを選択フレームへ
+						SSSflag[i] = ROT_SELECT;
 
-	//				// セレクトフラグを選択中に
-	//				SELECTflag = ROT_SELECT;
+					}
 
-	//				// フラグを選択フレーム上へ
-	//				SSSflag[i] = ROT_UP;
+					else
+					{
+						// テクスチャ更新
+						StageSelectLogo[i].LogoSize(flamesize.x, flamesize.y);
 
-	//			}
-	//		}
-
-	//	}
+					}
 
 
-	//}
+					// セレクトフラグをフレーム下へ
+					SELECTflag = ROT_DOWN;
 
+				}
 
-	//// 下移動制御処理
-	//// 最後の処理だったら
-	//// ↑キーを押したら
-	//if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
-	//{
-	//	// 上移動制御処理
-	//	// 最初の処理だったら
-	//	if (SSSflag[SSS_TUTORIAL] == ROT_SELECT)
-	//	{
-	//		// 上移動制限
-	//		UPflag = false;
-	//	}
-	//	// それ以外
-	//	else
-	//	{
-	//		// 上移動可能
-	//		DOWNflag = true;
-	//	}
+				// 選択されているフレームなら
+				else if (SSSflag[i] == ROT_SELECT)
+				{
+					// 移動量を更新
+					move.x += speed.x;
+					move.y -= speed.y;
+					StageSelectLogo[i].LogoMove(move.x, move.y);
 
-	//}
-	//// ↓キーを押したら
-	//else if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
-	//{
+					// テクスチャサイズ縮小
+					StageSelectLogo[i].LogoSize(flamesize.x, flamesize.y);
 
-	//	if (SSSflag[SSS_CRYSTAL] == ROT_SELECT)
-	//	{
-	//		// 下移動制限
-	//		DOWNflag = false;
-	//	}
+					// カラー変更
+					StageSelectLogo[i].SetVertex(D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
 
-	//	// それ以外
-	//	else
-	//	{
-	//		// 下移動可能
-	//		UPflag = true;
-	//	}
-	//}
+					// セレクトフラグを選択中に
+					SELECTflag = ROT_SELECT;
+
+					// フラグを選択フレーム上へ
+					SSSflag[i] = ROT_UP;
+				}
+			}
+		}
+	}
+
+	// 下移動制御処理
+	// 最後の処理だったら
+	// ↑キーを押したら
+	if ((GetKeyboardTrigger(DIK_UP)) || (IsButtonTriggered(0, LSTICK_UP)))
+	{
+		// 上移動制御処理
+		// 最初の処理だったら
+		if (SSSflag[SSS_TUTORIAL] == ROT_SELECT)
+		{
+			// 上移動制限
+			UPflag = false;
+		}
+		// それ以外
+		else
+		{
+			// 上移動可能
+			DOWNflag = true;
+		}
+
+	}
+	// ↓キーを押したら
+	else if ((GetKeyboardTrigger(DIK_DOWN)) || (IsButtonTriggered(0, LSTICK_DOWN)))
+	{
+
+		if (SSSflag[SSS_CRYSTAL] == ROT_SELECT)
+		{
+			// 下移動制限
+			DOWNflag = false;
+		}
+
+		// それ以外
+		else
+		{
+			// 下移動可能
+			UPflag = true;
+		}
+	}
 
 }
 
@@ -438,17 +416,17 @@ void UpdateStageSelect(void)
 void DrawStageSelect(void)
 {
 
-	//// 背景描画
-	//StageSelectBack.Draw();
+	// 背景描画
+	StageSelectBack.Draw();
 
-	//// ステージセレクト最大数描画処理
-	//for (int i = 0;i < SSS_MAX;i++)
-	//{
-	//	StageSelectLogo[i].Draw();
-	//}
+	// ステージセレクト最大数描画処理
+	for (int i = 0;i < SSS_MAX;i++)
+	{
+		StageSelectLogo[i].Draw();
+	}
 
-	//// 文字描画
-	//StageSelectText.Draw();
+	// 文字描画
+	StageSelectText.Draw();
 
 }
 
