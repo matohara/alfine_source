@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// プレイヤー処理 [Player.cpp]
+// プレイヤー処理 <Player.cpp>
 // Author : 初 景新
 //
 //=============================================================================
@@ -8,22 +8,13 @@
 #include "Library\Input.h"
 
 
-//*****************************************************************************
-// マクロ定義
-//*****************************************************************************
-
-
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
-
 //----プレイヤー情報セット--------
 void PlayerB::LoadPlayerStatus(float posX, int bx, int by, float x, float y)
 {
 	this->LoadTextureStatus(x, y, 1.0f, bx, by, 10);
 	this->Position = D3DXVECTOR3(posX, y, GAME_PLAYER_ZPOS);
 	this->Rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	this->Speed = 3;
+	this->Speed = PLAYER_MOVE_SPEED;
 	this->MakeVertex();
 }
 
@@ -267,30 +258,6 @@ void PlayerC::Uninit(void)
 {
 	// テクスチャバッファ開放
 	Release();
-}
-
-//----テクスチャ反転--------
-void PlayerC::FlipX(void)
-{
-	D3DXVECTOR2 tex;
-
-	{//頂点バッファの中身を埋める
-		VERTEX_3D *pVtx;
-
-		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-		VtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-		// 頂点座標の設定
-		tex = pVtx[0].tex;
-		pVtx[0].tex = pVtx[1].tex;
-		pVtx[1].tex = tex;
-		tex = pVtx[2].tex;
-		pVtx[2].tex = pVtx[3].tex;
-		pVtx[3].tex = tex;
-
-		// 頂点データをアンロックする
-		VtxBuff->Unlock();
-	}
 }
 
 //--テクスチャ座標の設定--//

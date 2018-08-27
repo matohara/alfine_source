@@ -37,12 +37,6 @@ void UICHitPoint::Init(int num)
 	}
 }
 
-//----XV--------
-void UICHitPoint::Update(void)
-{
-
-}
-
 //----•`‰æˆ—--------
 void UICHitPoint::Draw(int hp)
 {

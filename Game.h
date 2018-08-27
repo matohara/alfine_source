@@ -8,6 +8,7 @@
 #define _GAME_INCLUDE_H_
 
 #include "main.h"
+#include "Stage.h"
 
 #include "Library\Counter.h"
 #include "Library\Sound.h"
@@ -16,6 +17,7 @@
 #include "Player.h"
 #include "Back.h"
 #include "Field.h"
+#include "Notes.h"
 
 #include "GuideUI.h"
 #include "NotesUI.h"
@@ -57,40 +59,19 @@ enum FLAGTYPE
 //*****************************************************************************
 // ÉNÉâÉXê›åv
 //*****************************************************************************
-class CNotes
-{
-public:
-	int Timing;
-
-	CNotes()
-	{
-		Timing = 0;
-	};
-	CNotes(int time)
-	{
-		Timing = time;
-	};
-	~CNotes()
-	{
-
-	};
-
-private:
-
-};
-
 class GameSystem
 {
 public:
+	static StageBase *Stage;
 	static DSound BackMusic[2];
 
 	static PlayerB MainPlayer;
-	static CNotes *Notes;
+	static SNotes *Notes;
 
 	static GameField      OnSideField;
 	static GameField      OffSideField;
-	static GameBackGround OnSideBG[2];
-	static GameBackGround OffSideBG[2];
+	static GameBackGround OnSideBG;
+	static GameBackGround OffSideBG;
 
 	static CountDown   Countdown;
 	static C2DObject   BackPolyUI;

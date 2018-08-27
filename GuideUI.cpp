@@ -37,6 +37,12 @@ void UICGuide::Uninit(void)
 	this->Release();
 }
 
+//----活動チェック--------
+bool UICGuide::CheckActive()
+{
+	return this->Active;
+}
+
 //----セット--------
 void UICGuide::SetGuideUI(D3DXVECTOR3 pos)
 {

@@ -12,8 +12,6 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define FIELD_TEX_FRONT "data/チュートリアル/Field201.jpg"
-#define FIELD_TEX_BACK  "data/チュートリアル/Field202.png"
 
 #define FIELD_MUN (18)
 
@@ -22,15 +20,12 @@
 //*****************************************************************************
 class FieldA : public C3DPolygonObject
 {
-
 public:
 	FieldA() {};
 	~FieldA() {};
 
-	void Init(float posX, float sizeX, float sizeY, LPDIRECT3DTEXTURE9 texture);
-
-private:
-
+	void Init(float posX, float sizeX, float sizeY, LPDIRECT3DTEXTURE9 texture, int flip);
+	void FlipTexture();
 };
 
 
@@ -41,7 +36,6 @@ class GameField
 
 public:
 	void Init(float sizeX, float sizeY, const char *texture);
-//	void Update(void);
 	void Draw(void);
 	void Uninit(void);
 
@@ -50,10 +44,6 @@ public:
 };
 
 
-
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
 
 
 

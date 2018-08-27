@@ -10,7 +10,7 @@
 
 
 //----初期化処理--------
-void BGCBackFrontA::Init(float posZ, float posX, float fX, float fY, LPDIRECT3DTEXTURE9 texture)
+void BGCBackFrontA::Init(float posZ, float posX, float fX, float fY, LPDIRECT3DTEXTURE9 texture, int flip)
 {
 	// 情報をリセット
 	{
@@ -37,7 +37,7 @@ void BGCBackFrontA::Init(float posZ, float posX, float fX, float fY, LPDIRECT3DT
 
 	// 頂点設定
 	this->MakeVertex();
-	this->SetVertex();
+	this->SetVertex(flip);
 }
 
 //----終了処理--------
@@ -47,7 +47,7 @@ void BGCBackFrontA::Uninit(void)
 }
 
 //----頂点設定--------
-void BGCBackFrontA::SetVertex(void)
+void BGCBackFrontA::SetVertex(int flip)
 {
 	{//頂点バッファの中身を埋める
 		VERTEX_3D *pVtx;
@@ -60,6 +60,16 @@ void BGCBackFrontA::SetVertex(void)
 		pVtx[1].vtx = D3DXVECTOR3( Size.x, Size.y * 2.0f, 0.0f);
 		pVtx[2].vtx = D3DXVECTOR3(-Size.x,          0.0f, 0.0f);
 		pVtx[3].vtx = D3DXVECTOR3( Size.x,          0.0f, 0.0f);
+
+		//----テクスチャ反転--------
+		if (flip)
+		{
+			// 頂点座標の設定
+			pVtx[0].tex = D3DXVECTOR2(1.0f, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.0f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(1.0f, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.0f, 1.0f);
+		}
 
 		// 頂点データをアンロックする
 		VtxBuff->Unlock();
@@ -83,7 +93,7 @@ void GameBackGround::Init(float posZ, float fX, float fY, const char *texture)
 	this->LoadTexture(texture);
 	for (int iCnt = 0; iCnt < BACK_NUM; iCnt++)
 	{
-		Parts[iCnt].Init(posZ, fX * 2.0f * iCnt, fX, fY, this->Texture);
+		Parts[iCnt].Init(posZ, fX * 2.0f * iCnt, fX, fY, this->Texture, iCnt%2);
 	}
 }
 

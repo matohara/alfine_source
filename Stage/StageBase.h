@@ -9,15 +9,18 @@
 
 #include "../Library/ObjectBase2D.h"
 #include "../Library/ObjectBase3D.h"
-#include "../Game.h"
+#include "../Notes.h"
+#include <string>
 
-class LP3DPorygonObject
+using namespace std;
+
+class LPGimmick
 {
-	LP3DPorygonObject *next;
+	LPGimmick *next;
 public:
 	C3DPolygonObject *Obj;
 
-	LP3DPorygonObject();
+	LPGimmick();
 	C3DPolygonObject *Create();
 	void DrawAll();
 	void DeleteAll();
@@ -26,15 +29,35 @@ public:
 
 typedef class _StageBase
 {
-	LP3DPorygonObject Onside;
-	LP3DPorygonObject Ofside;
-public:
-	int  Init();
-	int  Update();
-	void Draw();
-	void Uninit();
 
+public:
+	LPGimmick Onside;	// 障害物（表）
+	LPGimmick Ofside;	// 障害物（裏）
+	LPGimmick OnBG;		// 背景オブジェ（表）
+	LPGimmick OfBG;		// 背景オブジェ（裏）
+
+	string MusicPassOn;		// 表曲のパス
+	string MusicPassOff;	// 裏曲のパス
+	string BackTexOn;		// 表背景のパス
+	string BackTexOff;		// 裏背景のパス
+	string FieldTexOn;		// 表の地面のパス
+	string FieldTexOff;		// 裏の地面のパス
+
+	string NameTex;		// ステージ名テクスチャのパス
+	string ImageTex;	// イメージ画のパス
+	string TestMusic;	// 試曲のパス
+
+public:
+	virtual int  Init();
+	virtual int  Update();
+	virtual void Draw();
+	virtual void Uninit();
+	virtual void SetGimmick(C3DPolygonObject *obj, int timing, int gimmick);
+
+	void SetNotesData(SNotes *notes, int num);
+	void back_Init();
 	void back_Draw(int side);
+	void back_Uninit();
 
 }StageBase;
 

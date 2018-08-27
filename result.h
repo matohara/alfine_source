@@ -4,8 +4,8 @@
 // Author : èâ åiêV
 //
 //=============================================================================
-#ifndef _RESULT_H_
-#define _RESULT_H_
+#ifndef _RESULT_INCLUDE_H_
+#define _RESULT_INCLUDE_H_
 
 
 #include "main.h"

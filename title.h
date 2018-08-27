@@ -8,7 +8,7 @@
 #define _TITLE_INCLUDE_H_
 
 #include "Library\ObjectBase2D.h"
-#include "main.h"
+
 
 //*****************************************************************************
 // ÉNÉâÉXê›åv

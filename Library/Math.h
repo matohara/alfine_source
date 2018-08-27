@@ -12,6 +12,9 @@
 
 
 #define ROOT2 (1.4142135624f)
+#define ROOT3 (1.7320508076f)
+#define ROOT5 (2.2360679775f)
+#define ROOT7 (2.6457513111f)
 
 
 #define Absolute( value ) ( value < 0 ? -value : value )

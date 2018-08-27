@@ -25,13 +25,7 @@
 class UICNotesLane : public C2DObject
 {
 public:
-	UICNotesLane() {};
-	~UICNotesLane() {};
-
 	int  Init(void);
-	void Uninit(void);
-
-private:
 
 };
 
@@ -44,23 +38,14 @@ public:
 	D3DXVECTOR2 Size;
 	bool Active;
 
-	UICNotes() {};
-	~UICNotes() {};
-
 	int  Init(void);
 	void Update(void);
-	void Uninit(void);
 
 	void ReSet(void);
-
-private:
 
 };
 
 
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
 
 
 

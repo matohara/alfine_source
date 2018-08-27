@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// プレイヤー処理 [Player.h]
+// プレイヤー処理 <Player.h>
 // Author : 初 景新
 //
 //=============================================================================
@@ -11,9 +11,7 @@
 #include "Library\ObjectBase3D.h"
 
 
-//*****************************************************************************
 // マクロ定義
-//*****************************************************************************
 #define GAME_PLAYER_ZPOS (-60.0f)
 
 #define TEXTURE_PLAYER		_T("data/TEXTURE/PLAYER/Player.png")	// プレイヤー画像
@@ -23,22 +21,16 @@
 
 #define DATAFILE_PLAYER_ROUTE	"data/STAGE/RouteData.txt"
 
-#define PLAYER_MOVE_SPEED	(10.0f)	// プレイヤーの移動速度
+#define PLAYER_MOVE_SPEED	(3)	// プレイヤーの移動速度
 
 #define PLAYER_MAX		(1)		//プレイヤー最大数
 
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
 
 class PlayerB : public C3DPolygonObject
 {
 	float Speed;	// 移動速度
 
 public:
-	PlayerB() {};
-	~PlayerB() {};
-
 	void LoadPlayerStatus(float posX, int bx, int by, float x, float y);
 	void Animation(void);
 	void Move(D3DXVECTOR3 vec);
@@ -62,6 +54,7 @@ private:
 	void SetTexture(void);
 
 };
+
 
 class PlayerC : public C3DPolygonObject
 {
@@ -89,8 +82,6 @@ public:
 	{
 		return (Position + D3DXVECTOR3(x, y, z));
 	}
-
-	void FlipX(void);
 
 private:
 	void SetTexture(void);

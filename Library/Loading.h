@@ -1,11 +1,11 @@
 //=============================================================================
 //
-// ローディング画面処理 [Loading.h]
+// ローディング画面処理 <Loading.h>
 // Author : 初 景新
 //
 //=============================================================================
-#ifndef _LOADING_INCLUDE_H_
-#define _LOADING_INCLUDE_H_
+#ifndef __LOADING_INCLUDE_H__
+#define __LOADING_INCLUDE_H__
 
 
 #include "LinkLibrary.h"

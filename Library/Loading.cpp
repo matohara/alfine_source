@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// ローディング画面処理 [Loading.cpp]
+// ローディング画面処理 <Loading.cpp>
 // Author : 初 景新
 //
 //=============================================================================
@@ -8,22 +8,15 @@
 #include "Input.h"
 #include "Fade.h"
 
-//*****************************************************************************
-// マクロ定義
-//*****************************************************************************
+
 #define LOADING_TEX_BACK "data/TEXTURE/SCENE/LoadBack.jpg"
 #define LOADING_TEX_GAGE "data/TEXTURE/SCENE/LoadBox.jpg"
 #define LOADING_TEX_TEXT "data/TEXTURE/SCENE/load.png"
 
 
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
-
 //----初期化--------
 void CNowLoading::Init(GAMESCENE scene)
 {
-//	NextScene = scene;
 	Back.LoadTexture(LOADING_TEX_BACK);
 	Text.Init(RelativeSX(0.8f), RelativeSY(0.8f), 200, 10, LOADING_TEX_TEXT);
 	PercentGage.Init(LOADING_TEX_GAGE, LOADING_TEX_GAGE);

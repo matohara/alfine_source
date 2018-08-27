@@ -5,7 +5,6 @@
 //
 //=============================================================================
 #include "Game.h"
-#include "Stage.h"
 
 #include "Library\Input.h"
 #include "Library\Fade.h"
@@ -25,13 +24,14 @@
 //*****************************************************************************
 // クラス
 //*****************************************************************************
+StageBase     *GameSystem::Stage;
 DSound         GameSystem::BackMusic[2];
 PlayerB        GameSystem::MainPlayer;
-CNotes        *GameSystem::Notes;
+SNotes        *GameSystem::Notes;
 GameField      GameSystem::OnSideField;
 GameField      GameSystem::OffSideField;
-GameBackGround GameSystem::OnSideBG[2];
-GameBackGround GameSystem::OffSideBG[2];
+GameBackGround GameSystem::OnSideBG;
+GameBackGround GameSystem::OffSideBG;
 CountDown      GameSystem::Countdown;
 C2DObject      GameSystem::BackPolyUI;
 C2DObject      GameSystem::LogoOption;
@@ -52,6 +52,7 @@ void GameSystem::Init(void)
 
 	// データの初期化
 	Notes = NULL;
+	Stage = NULL;
 	GameCounter = 0;
 	NotesCounter = 0;
 	NotesCounter2 = 3;
@@ -61,29 +62,8 @@ void GameSystem::Init(void)
 	GuideUI.Init();
 
 	// ステージ
-	CNotes notes[] = {
-		{  160 },
-		{  240 },
-		{  321 },
-		{  403 },
-		{  484 },
-		{  565 },
-		{  642 },
-		{  704 },
-		{  809 },
-		{  883 },
-		{  962 },
-		{ 1083 },
-		{ 1184 },
-		{ 1281 },
-		{ 1362 },
-		{ 1442 } };
-	const int notesSize = sizeof(notes) / sizeof(CNotes);
-	Notes = new CNotes[notesSize];
-	for (int iCnt = 0; iCnt < notesSize; iCnt++)
-	{
-		Notes[iCnt] = notes[iCnt];
-	}
+	Stage = GetRunStage();
+	Stage->Init();
 
 	// プレイヤー
 	MainPlayer.Init(TEXTURE_PLAYER2, 7, 1);
@@ -91,21 +71,25 @@ void GameSystem::Init(void)
 	/* ローディング更新 */
 	NowLoading.Progress(10);
 
+	// ステージ初期化
+	Stage->back_Init();
+	Stage->Init();
+	/* ローディング更新 */
+	NowLoading.Progress(20);
+
 	// 表前後壁
-	OnSideBG[0].Init(256, 640, 120, BACK_TEX_ONSIDE_BACK);
-	OnSideBG[1].Init(128, 640, 120, BACK_TEX_ONSIDE_FRONT);
+	OnSideBG.Init(256, 640, 120, Stage->BackTexOn.c_str());
 	/* ローディング更新 */
 	NowLoading.Progress(30);
 
 	// 裏前後壁
-	OffSideBG[0].Init(256, 640, 120, BACK_TEX_OFFSIDE_BACK);
-	OffSideBG[1].Init(128, 640, 120, BACK_TEX_OFFSIDE_FRONT);
+	OffSideBG.Init(256, 640, 120, Stage->BackTexOff.c_str());
 	/* ローディング更新 */
-	NowLoading.Progress(60);
+	NowLoading.Progress(40);
 
 	// フィールド
-	OnSideField.Init(480, 270, FIELD_TEX_FRONT);
-	OffSideField.Init(480, 270, FIELD_TEX_BACK);
+	OnSideField.Init(480, 270, Stage->FieldTexOn.c_str());
+	OffSideField.Init(480, 270, Stage->FieldTexOff.c_str());
 	/* ローディング更新 */
 	NowLoading.Progress(70);
 	
@@ -128,8 +112,8 @@ void GameSystem::Init(void)
 	GameMenu::Init();
 
 	// BGM
-	BackMusic[0].LoadSound("data/BGM/tutorial.wav");
-	BackMusic[1].LoadSound("data/BGM/tutorialBack.wav");
+	BackMusic[0].LoadSound(Stage->MusicPassOn.c_str());
+	BackMusic[1].LoadSound(Stage->MusicPassOff.c_str());
 
 	/* ローディング更新&終了 */
 	NowLoading.Progress(100);
@@ -150,11 +134,8 @@ void GameSystem::Uninit(void)
 	MainPlayer.Uninit();
 
 	// 前後壁
-	OnSideBG[0].Uninit();
-	OnSideBG[1].Uninit();
-
-	OffSideBG[0].Uninit();
-	OffSideBG[1].Uninit();
+	OnSideBG.Uninit();
+	OffSideBG.Uninit();
 
 	// フィールド
 	OnSideField.Uninit();
@@ -179,6 +160,11 @@ void GameSystem::Uninit(void)
 	// BGM
 	BackMusic[0].Release();
 	BackMusic[1].Release();
+
+	// ステージ
+	Stage->back_Uninit();
+	delete Stage;
+	Stage = NULL;
 }
 
 //----更新--------
@@ -193,8 +179,10 @@ void GameSystem::Update(void)
 	}
 #endif // !_DEBUG
 
+	// ステージ
+	Stage->Update();
 
-	// ゲームの再生、停止
+	// ポーズ
 	if (GetKeyboardTrigger(DIK_ESCAPE))
 	{
 		if (GameFlag & FLAG_GAME_PLAYING)
@@ -239,23 +227,14 @@ void GameSystem::Update(void)
 	}
 #endif // _DEBUG
 
-
+	/* プレイ中処理 */
 	if (GameFlag & FLAG_GAME_PLAYING)
 	{
 		// 判定
-		if ((GetKeyboardTrigger(DIK_SPACE))||(IsButtonTriggered(0, BUTTON_X)))
+		if ((GetKeyboardTrigger(DIK_SPACE)) || (IsButtonTriggered(0, BUTTON_X)))
 		{
 			SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHANGE);
-			//if ((GameCounter < Notes[NotesCounter].Timing - 8) ||
-			//	(GameCounter > Notes[NotesCounter].Timing + 12))
-			//{
-			//	CSFade::SetFade(0.2f, GAMECOLOR_RED);
-			//	PlayerHP--;
-			//}
-			//else
-			{
-				CSFade::SetFade(0.2f);
-			}
+			CSFade::SetFade(0.2f);
 		}
 
 		if (GameCounter == Notes[NotesCounter].Timing - 8)
@@ -287,7 +266,6 @@ void GameSystem::Update(void)
 		}
 #endif // _DEBUG
 
-
 		// ゲームを進行
 		GameCounter++;
 
@@ -298,24 +276,12 @@ void GameSystem::Update(void)
 			SetGameScene(SCENE_RESULT);
 		}
 
-		// 前後壁&フィールド
-
-
 		// ガイドUI
-		if (GuideUI.Active)
+		if (GuideUI.CheckActive())
 		{
 			GuideUI.Update();
 		}
 	}
-
-
-	/* UI */
-	// HP
-	HitPointUI.Update();
-
-	// 背景ポリゴン
-
-	// オプションロゴ
 
 	// メニュー
 	if (GameMenu::Update())
@@ -325,7 +291,7 @@ void GameSystem::Update(void)
 	}
 
 	// カウントダウン
-	if (!(GameFlag & FLAG_GAME_PLAYING) && !GameMenu::Check())
+	if (~GameFlag & FLAG_GAME_PLAYING && !GameMenu::Check())
 	{
 		if (Countdown.ActiveCheck())
 		{
@@ -336,8 +302,8 @@ void GameSystem::Update(void)
 			GameFlag |= FLAG_GAME_PLAYING;
 
 			// 再生
-			BackMusic[0].Play(E_DS8_FLAG_LOOP);
-			BackMusic[1].Play(E_DS8_FLAG_LOOP);
+			BackMusic[0].Play(E_DS8_FLAG_NONE);
+			BackMusic[1].Play(E_DS8_FLAG_NONE);
 			BackMusic[1].Volume(VOLUME_MIN);
 		}
 	}
@@ -359,26 +325,27 @@ void GameSystem::Update(void)
 void GameSystem::Draw(void)
 {
 	// ガイドUI
-	if (GuideUI.Active)
+	if (GuideUI.CheckActive())
 	{
 		GuideUI.Draw();
 	}
 
 	/* ステージ */
+	Stage->back_Draw(SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK));
+	Stage->Draw();
+
 	// プレイヤー
 	MainPlayer.Draw();
 
 	// 前後壁&フィールド
 	if (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
 	{
-		OffSideBG[0].Draw();
-		OffSideBG[1].Draw();
+		OffSideBG.Draw();
 		OffSideField.Draw();
 	}
 	else
 	{
-		OnSideBG[0].Draw();
-		OnSideBG[1].Draw();
+		OnSideBG.Draw();
 		OnSideField.Draw();
 	}
 
@@ -475,16 +442,15 @@ void UninitGame(void)
 	// ゲーム
 	GameSystem::Uninit();
 
-
 #ifdef _DEBUG
 	/* Keep */
 	// UIノーツレーン
-	NotesLane.Uninit();
+	NotesLane.Release();
 
 	// UIノーツ
 	for (int iCnt = 0; iCnt < NOTES_UI_MAX; iCnt++)
 	{
-		UINotes[iCnt].Uninit();
+		UINotes[iCnt].Release();
 	}
 #endif // DEBUG
 }
@@ -494,11 +460,24 @@ void UninitGame(void)
 //=============================================================================
 void UpdateGame(void)
 {
+	D3DXVECTOR3 playerVec = GameSystem::MainPlayer.GetPosition();
 	// カメラ更新
-	UpdateCamera(GameSystem::MainPlayer.GetPosition());
+	UpdateCamera(playerVec);
 
 	// ゲーム
-	GameSystem::Update();
+	if (playerVec.x < 0.0f)
+	{
+		GameSystem::MainPlayer.Move(DXV3(2.0f, 0.0f, 0.0f));
+	}
+	else if (playerVec.x >= -2.0f && playerVec.x <= 0.0f)
+	{
+		GameSystem::MainPlayer.SetPositionX(0.01f);
+		GameSystem::Countdown.Set(60, 3, 50, 100);
+	}
+	else
+	{
+		GameSystem::Update();
+	}
 
 #ifdef _DEBUG
 	if (GameSystem::GameFlag & FLAG_GAME_PLAYING)
@@ -515,9 +494,12 @@ void UpdateGame(void)
 			}
 		}
 	}
-#endif // DEBUG
+
+	PrintDebugProcess("プレイヤー位置 : (%v)\n", playerVec);
 
 	PrintDebugProcess("現在の面 : (%d)\n", (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK) ? 1 : 0));
+	PrintDebugProcess("ゲームのRun状態 : %d", SetGameFlag(FLAG_GAME_PLAYING, FT_CHECK) ? 1 : 0);
+#endif // DEBUG
 
 }
 

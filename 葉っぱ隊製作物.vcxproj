@@ -165,6 +165,7 @@
     <ClCompile Include="Library\Sound.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Notes.cpp" />
     <ClCompile Include="NotesUI.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="result.cpp" />
@@ -194,11 +195,14 @@
     <ClInclude Include="Library\Sound.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Notes.h" />
     <ClInclude Include="NotesUI.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageSelect.h" />
+    <ClInclude Include="Stage\Stage01.h" />
+    <ClInclude Include="Stage\Stage02.h" />
     <ClInclude Include="Stage\StageBase.h" />
     <ClInclude Include="Stage\STutorial.h" />
     <ClInclude Include="StatusBarUI.h" />

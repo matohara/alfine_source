@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// ノーツUIクラス <Notes.cpp>
+// ノーツUIクラス <NotesUI.cpp>
 // Author : 初 景新
 //
 //=============================================================================
@@ -44,12 +44,6 @@ void UICNotes::Update(void)
 	}
 }
 
-//----終了処理--------
-void UICNotes::Uninit(void)
-{
-	this->Release();
-}
-
 //----リセット--------
 void UICNotes::ReSet(void)
 {
@@ -66,12 +60,6 @@ int UICNotesLane::Init(void)
 	this->LoadTexture(UI_TEX_LANE);
 	this->MakeVertex(NL_SIZE_X, NL_SIZE_Y, NL_CHECK_POS_X, NL_CHECK_POS_Y);
 	return 0;
-}
-
-//----終了処理--------
-void UICNotesLane::Uninit(void)
-{
-	this->Release();
 }
 
 

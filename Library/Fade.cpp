@@ -13,10 +13,10 @@
 
 /* グローバル変数 */
 VERTEX_2D	CSFade::Vertex[NUM_VERTEX];
-D3DXCOLOR	CSFade::Color = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
-GAMESCENE	CSFade::GameScene;
-FADE		CSFade::Fade = FADE_IN;
-float		CSFade::Speed = 0.1f;
+D3DXCOLOR	CSFade::Color     = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+GAMESCENE	CSFade::GameScene = SCENE_MAX;
+FADE		CSFade::Fade      = FADE_IN;
+float		CSFade::Speed     = FADE_RATE;
 
 //----更新--------
 void CSFade::Update(void)
@@ -33,7 +33,7 @@ void CSFade::Update(void)
 
 				// フェードイン処理に切り替え
 				Color.a = 1.0f;
-				SetFade(FADE_IN, SCENE_MAX, FADE_RATE);
+				SetFade(FADE_IN, SCENE_MAX, Speed);
 			}
 
 			// 色を設定
@@ -46,7 +46,7 @@ void CSFade::Update(void)
 			{
 				// フェード処理終了
 				Color.a = 0.0f;
-				SetFade(FADE_NONE, SCENE_MAX, FADE_RATE);
+				SetFade(FADE_NONE, SCENE_MAX, Speed);
 			}
 
 			// 色を設定
@@ -80,9 +80,9 @@ void CSFade::MakeVertex(void)
 	Vertex[3].vtx = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 
 	// テクスチャのパースペクティブコレクト用
-	Vertex[0].rhw =
-	Vertex[1].rhw =
-	Vertex[2].rhw =
+	Vertex[0].rhw = 1.0f;
+	Vertex[1].rhw = 1.0f;
+	Vertex[2].rhw = 1.0f;
 	Vertex[3].rhw = 1.0f;
 
 	// 反射光の設定

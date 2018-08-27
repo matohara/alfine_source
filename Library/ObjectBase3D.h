@@ -21,6 +21,7 @@ public:
 	virtual void LoadTexture(const char *texture);			// 前テクスチャはクリア(開放あり)
 	virtual void LoadTexture(LPDIRECT3DTEXTURE9 texture);	// 前テクスチャはリリース(開放なし)
 	virtual void Release();
+	virtual void ReleaseVertex();
 };
 
 
@@ -31,7 +32,7 @@ protected:
 	D3DXVECTOR3 Position;	// 位置座標
 	D3DXVECTOR3 Rotation;	// 回転角度
 	D3DXVECTOR2 Size;		// ポリゴンサイズ
-	float Scale;			// サイズ倍率
+	float       Scale;		// サイズ倍率
 
 	int TexPattern_X;		// テクスチャパターン（横）
 	int TexPattern_Y;		// テクスチャパターン（縦）
@@ -49,13 +50,12 @@ public:
 	virtual void Init(float posX, float posY, float posZ, float sizX, float sizY);
 	virtual void Init(D3DXVECTOR3 pos, D3DXVECTOR2 size);
 	virtual void Init(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR2 size);
-	virtual void Draw(void);	// 描画処理
+	virtual void Draw(void);
 
 	virtual void LoadTextureStatus(float sizX, float sizY, float scale, int ptnX, int ptnY, int time);
 	virtual void LoadTextureStatus(float sizX, float sizY, float scale);
 	virtual void LoadObjectStatus(D3DXVECTOR3 pos);
 	virtual void LoadObjectStatus(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
-
 };
 
 /* 3D多数板ポリオブジェクト */
@@ -66,7 +66,7 @@ public:
 };
 
 
-/* 3D六面体オブジェクト */
+/* 3D六面体オブジェクト *///*
 class C3DCubeObject
 {
 	LPDIRECT3DTEXTURE9 Texture;

@@ -8,11 +8,9 @@
 #define _UI_HP_CLASS_INCLUDE_H_
 
 #include "Library\ObjectBase2D.h"
-#include "main.h"
 
-//*****************************************************************************
+
 // マクロ定義
-//*****************************************************************************
 #define UI_TEX_HP01 "data/TEXTURE/UI/HP01.png"
 #define UI_TEX_HP02 "data/TEXTURE/UI/HP02.png"
 
@@ -24,9 +22,7 @@
 
 #define HPUI_MAX_HP (5)
 
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
+
 class UICHitPoint
 {
 	C2DObject *HP_UI;
@@ -34,23 +30,13 @@ class UICHitPoint
 	int HP_MAX;
 
 public:
-	UICHitPoint() {};
-	~UICHitPoint() {};
-
 	void Init(int num, float posX, float posY, float sizeX, float sizeY);
 	void Init(int num);
-	void Update(void);
 	void Draw(int hp);
 	void Uninit(void);
 
-private:
-
 };
 
-
-//*****************************************************************************
-// プロトタイプ宣言
-//*****************************************************************************
 
 
 

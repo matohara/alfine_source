@@ -35,6 +35,14 @@ void _ObjectBase3D::Release()
 		VtxBuff = NULL;
 	}
 }
+void _ObjectBase3D::ReleaseVertex()
+{
+	if (VtxBuff != NULL)
+	{	// 頂点の開放
+		VtxBuff->Release();
+		VtxBuff = NULL;
+	}
+}
 
 
 /* 3D板ポリ */
@@ -270,6 +278,7 @@ void C3DMultiPolygonObject::Release()
 //----コンストラクタ--------
 C3DCubeObject::C3DCubeObject()
 {
+	this->Texture = NULL;
 	this->Position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	this->Rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	this->Size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);

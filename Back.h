@@ -12,35 +12,25 @@
 // マクロ定義
 #define BACK_NUM (14)
 
-#define TEXTURE_FILE_BACK_B  "data/STAGE/BackTextureB.txt"
-#define TEXTURE_FILE_BACK_F  "data/STAGE/BackTextureF.txt"
 
-#define BACK_TEX_ONSIDE_FRONT  "data/チュートリアル/OnSideFront.png"
-#define BACK_TEX_ONSIDE_BACK   "data/チュートリアル/OnSideBack.jpg"
-#define BACK_TEX_OFFSIDE_FRONT "data/チュートリアル/OffSideFront.png"
-#define BACK_TEX_OFFSIDE_BACK  "data/チュートリアル/OffSideBack.png"
-
-
-//*****************************************************************************
-// クラス設計
-//*****************************************************************************
+/* 壁本体 */
 class BGCBackFrontA : public C3DPolygonObject
 {
 public:
 	BGCBackFrontA() {};
 	~BGCBackFrontA() {};
 
-	void Init(float posZ, float posX, float fX, float fY, LPDIRECT3DTEXTURE9 texture);
+	void Init(float posZ, float posX, float fX, float fY, LPDIRECT3DTEXTURE9 texture, int flip);
 	void Uninit(void);
 
-	void SetVertex(void);
+	void SetVertex(int flip);
 	void ReleaseBuffer(void);
 
 private:
 
 };
 
-
+/* 壁クラス */
 class GameBackGround
 {
 	LPDIRECT3DTEXTURE9 Texture;

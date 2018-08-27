@@ -4,33 +4,28 @@
 // Author : 初 景新
 //
 //=============================================================================
-#include "Game.h"
 #include "Stage.h"
-#include "Stage\STutorial.h"
+
+/* ステージファイル */
+#include "Stage/STutorial.h"
+#include "Stage/Stage01.h"
 
 
-void InitStage(void)
+StageBase *RunStage = NULL;
+
+void SetRunStage(StageBase *stage)
 {
-
-}
-void UninitStage(void)
-{
-
-}
-void UpdateStage(void)
-{
-
-}
-void DrawStage(void)
-{
-
+	if (RunStage != NULL)
+	{
+		delete RunStage;
+		RunStage = NULL;
+	}
+	RunStage = stage;
 }
 
-void LoadStage()
+StageBase *GetRunStage()
 {
-	StageBase *stage[] = {
-		new STutorial
-	};
+	return new Stage01;
 }
 
 

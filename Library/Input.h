@@ -4,8 +4,8 @@
 // Author : èâ åiêV
 //
 //=============================================================================
-#ifndef __INPUT_H__
-#define __INPUT_H__
+#ifndef __INPUT_INCLUDE_H__
+#define __INPUT_INCLUDE_H__
 
 #include "LinkLibrary.h"
 

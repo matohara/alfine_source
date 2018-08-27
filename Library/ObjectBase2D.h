@@ -1,5 +1,5 @@
-#ifndef __CLASS_2D_OBJECT_BASE_H_INCLUDE__
-#define __CLASS_2D_OBJECT_BASE_H_INCLUDE__
+#ifndef __CLASS_2D_OBJECT_BASE_INCLUDE_H__
+#define __CLASS_2D_OBJECT_BASE_INCLUDE_H__
 
 #include "LinkLibrary.h"
 
@@ -50,7 +50,7 @@ public:
 	virtual int  Init(float posX, float posY, float sizX, float sizY);
 	virtual void SetVertex();
 	        void SetVertex(int no, D3DXVECTOR3 vtx);
-	        void SetVertex(D3DCOLOR    dif);
+	        void SetVertex(D3DCOLOR dif);
 	        void SetVertex(int no, D3DCOLOR    dif);
 	        void SetVertex(int no, D3DXVECTOR2 tex);
 
@@ -76,7 +76,7 @@ public:
 class UI2DAnimation : public C2DObject
 {
 	D3DXCOLOR Color;
-	float Curve;
+	float     Curve;
 
 public:
 	int Init(const char *texture);

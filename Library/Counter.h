@@ -27,7 +27,7 @@ public:
 	void Set(int inter, int time, float posX, float posY, float sizX, float sizY, const char *texture);
 	void Set(int inter, int time, float sizX, float sizY, const char *texture);
 	void Set(int inter, int time, float sizX, float sizY);
-	int Count();
+	int  Count();
 	bool ActiveCheck();
 
 	int Animation();

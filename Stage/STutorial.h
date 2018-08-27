@@ -2,6 +2,8 @@
 #define _STAGE_TUTORIAL_
 
 #include "StageBase.h"
+#include "../Game.h"
+
 
 /* TutorialText */
 #define TUTORIAL_UI01 "data/チュートリアル/Text00.png"
@@ -23,22 +25,27 @@
 
 class STutorial : public StageBase
 {
-	LPDIRECT3DTEXTURE9    TutorialObjTex = NULL;
+	LPDIRECT3DTEXTURE9    TutorialObjTex;
 	C3DMultiPolygonObject TutorialObjON[8][2];
 	C3DMultiPolygonObject TutorialObjOF[8][2];
-
-	C3DCubeObject TestCube;
 
 public:
 	STutorial()
 	{
-
+		TutorialObjTex = NULL;
+		NameTex   = "";
+		ImageTex  = "";
+		TestMusic = "";
 	}
 
 	int  Init()
 	{
-		TestCube.LoadTexture(TUTORIAL_OBJ01);
-		TestCube.Init(DXV3(0.0f, 100.0f, 0.0f), 100.0f);
+		MusicPassOn = "data/BGM/tutorial.wav";
+		MusicPassOff = "data/BGM/tutorialBack.wav";
+		BackTexOn = "data/チュートリアル/OnSideBack.jpg";
+		BackTexOff = "data/チュートリアル/OffSideBack.png";
+		FieldTexOn = "data/チュートリアル/Field201.jpg";
+		FieldTexOff = "data/チュートリアル/Field202.png";
 
 		// オブジェクト
 		D3DXCreateTextureFromFile(GetDevice(), TUTORIAL_OBJ01, &TutorialObjTex);
@@ -48,6 +55,30 @@ public:
 			TutorialObjOF[i][1].LoadTexture(TutorialObjTex);
 			TutorialObjON[i][0].LoadTexture(TutorialObjTex);
 			TutorialObjON[i][1].LoadTexture(TutorialObjTex);
+		}
+
+		SNotes notes[] = {
+			{ 160 },
+			{ 240 },
+			{ 321 },
+			{ 403 },
+			{ 484 },
+			{ 565 },
+			{ 642 },
+			{ 704 },
+			{ 809 },
+			{ 883 },
+			{ 962 },
+			{ 1083 },
+			{ 1184 },
+			{ 1281 },
+			{ 1362 },
+			{ 1442 } };
+		const int notesSize = sizeof(notes) / sizeof(SNotes);
+		GameSystem::Notes = new SNotes[notesSize];
+		for (int iCnt = 0; iCnt < notesSize; iCnt++)
+		{
+			GameSystem::Notes[iCnt] = notes[iCnt];
 		}
 
 		int cnt = 0;
@@ -66,16 +97,16 @@ public:
 			TutorialObjOF[i][1].Init(D3DXVECTOR3(posX, 50.0f, -50.0f), D3DXVECTOR3(0.0f, 1.57f, 0.0f), D3DXVECTOR2(50, 50));
 			cnt++;
 		}
-
+		return 0;
 	}
+
 	int  Update()
 	{
-
+		return 0;
 	}
+
 	void Draw()
 	{
-		TestCube.Draw();
-
 		// オブジェクト
 		if (SetGameFlag(FLAG_GAME_MAPSIDES, FT_CHECK))
 		{
@@ -94,10 +125,9 @@ public:
 			}
 		}
 	}
+
 	void Uninit()
 	{
-		TestCube.Release();
-
 		if (TutorialObjTex != NULL)
 		{
 			TutorialObjTex->Release();

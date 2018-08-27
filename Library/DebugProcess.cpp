@@ -17,11 +17,8 @@
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-LPD3DXFONT	g_pD3DXFont = NULL;			// フォントへのポインタ
-
-unsigned int DebugStatus = 0xFFFFFFFF;	// デバッグ表示の状態
-
-char		g_aStrDebug[1024] = {"\0"};	// デバッグ情報
+LPD3DXFONT Dx9DebugFont = NULL;			// フォントへのポインタ
+char       DebugString[1024] = {"\0"};	// デバッグ情報
 
 
 //=============================================================================
@@ -33,11 +30,21 @@ HRESULT InitDebugProcess(void)
 	HRESULT hr;
 
 	// 情報表示用フォントを設定
-	hr = D3DXCreateFont(pDevice, 18, 0, 0, 0, FALSE, SHIFTJIS_CHARSET,
-					OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Terminal", &g_pD3DXFont);
+	hr = D3DXCreateFont(pDevice,// 3Dデバイス
+		18,						// フォントの高さ
+		 0,						// フォントの横幅
+		 0,						// フォントの太さ
+		 0,						// ミニマップ数(1か0で十分)
+		FALSE,					// イタリック
+		SHIFTJIS_CHARSET,		// フォントタイプ
+		OUT_DEFAULT_PRECIS,		// 「OUT_DEFAULT_PRECIS」固定っぽい
+		DEFAULT_QUALITY,		// 実際フォントと目的フォントの一致方法を指定
+		DEFAULT_PITCH,			// ぱっちあんどふぁみりー
+		"Terminal",				// フォントデータ名
+		&Dx9DebugFont);			// フォントデータ保管場所
 
 	// 情報クリア
-	memset(g_aStrDebug, 0, sizeof g_aStrDebug);
+	memset(DebugString, 0, sizeof DebugString);
 
 	return hr;
 }
@@ -47,10 +54,10 @@ HRESULT InitDebugProcess(void)
 //=============================================================================
 void UninitDebugProcess(void)
 {
-	if(g_pD3DXFont != NULL)
+	if(Dx9DebugFont != NULL)
 	{// 情報表示用フォントの開放
-		g_pD3DXFont->Release();
-		g_pD3DXFont = NULL;
+		Dx9DebugFont->Release();
+		Dx9DebugFont = NULL;
 	}
 }
 
@@ -69,14 +76,11 @@ void DrawDebugProcess(void)
 {
 	RECT rect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
-	//// 情報表示
-	//g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xFF, 0xFF, 0x22, 0x44));
-
 	// 情報表示
-	g_pD3DXFont->DrawText(NULL, g_aStrDebug, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xFF, 0x00, 0x00, 0x00));
+	Dx9DebugFont->DrawText(NULL, DebugString, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xFF, 0xFF, 0x22, 0x44));
 
 	// 情報クリア
-	memset(g_aStrDebug, 0, sizeof g_aStrDebug);
+	memset(DebugString, 0, sizeof DebugString);
 }
 
 //=============================================================================
@@ -174,32 +178,10 @@ void PrintDebugProcess(char *fmt,...)
 	va_end(list);
 
 	// 連結
-	if((strlen(g_aStrDebug) + strlen(aBuf)) < sizeof g_aStrDebug - 1)
+	if((strlen(DebugString) + strlen(aBuf)) < sizeof DebugString - 1)
 	{
-		strcat(g_aStrDebug, aBuf);
+		strcat(DebugString, aBuf);
 	}
 #endif
 }
 
-//=============================================================================
-// デバッグ表示の状態を操作
-//=============================================================================
-int GetDebugStatus(int dbgMode)
-{
-	if (dbgMode != 0)
-	{
-		return (dbgMode & DebugStatus);
-	}
-
-	return DebugStatus;
-}
-
-void OnDebug(int dbgMode)
-{
-	DebugStatus |= dbgMode;
-}
-
-void OffDebug(int dbgMode)
-{
-	DebugStatus &= (~dbgMode);
-}

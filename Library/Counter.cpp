@@ -24,6 +24,7 @@ void CountDown::Set(int inter, int time, float posX, float posY, float sizX, flo
 	this->Counter = 0;
 	this->Time = time;
 	this->Init(posX, posY, sizX, sizY, texture);
+	this->SetNumber(time);
 }
 void CountDown::Set(int inter, int time, float sizX, float sizY, const char *texture)
 {
@@ -33,6 +34,7 @@ void CountDown::Set(int inter, int time, float sizX, float sizY, const char *tex
 	this->Counter = 0;
 	this->Time = time;
 	this->Init(SCREEN_CENTER_X, SCREEN_CENTER_Y, sizX, sizY, texture);
+	this->SetNumber(time);
 }
 void CountDown::Set(int inter, int time, float sizX, float sizY)
 {
@@ -42,6 +44,7 @@ void CountDown::Set(int inter, int time, float sizX, float sizY)
 	this->Counter = 0;
 	this->Time = time;
 	this->SetStatus(SCREEN_CENTER_X, SCREEN_CENTER_Y, sizX, sizY);
+	this->SetNumber(time);
 }
 
 int CountDown::Count()
